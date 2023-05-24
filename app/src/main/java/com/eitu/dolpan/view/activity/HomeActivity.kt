@@ -193,6 +193,7 @@ class HomeActivity : BaseFragmentActivity() {
             }
 
         if (playlistAlreadyExist) {
+            Log.d("playlist", "already exist")
             val binding = DialogYtPlAlreadyBinding.inflate(activity.layoutInflater)
             DolpanDialog(activity)
                 .viewBinding(binding)

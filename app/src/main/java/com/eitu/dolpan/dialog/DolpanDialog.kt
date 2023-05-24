@@ -1,13 +1,14 @@
 package com.eitu.dolpan.dialog
 
+import android.R
 import android.app.Activity
 import android.app.Dialog
-import android.os.Bundle
+import android.content.res.Configuration
 import android.util.DisplayMetrics
 import android.view.View
 import android.view.ViewGroup.LayoutParams
-import android.view.Window
 import androidx.viewbinding.ViewBinding
+
 
 class DolpanDialog(activity: Activity): Dialog(activity) {
 
@@ -17,6 +18,7 @@ class DolpanDialog(activity: Activity): Dialog(activity) {
     init {
         this.activity = activity
         this.dm = activity.resources.displayMetrics
+        this.window?.setBackgroundDrawableResource(R.color.transparent)
     }
 
     fun viewBinding(viewBinding: ViewBinding): DolpanDialog {

@@ -1,16 +1,13 @@
 package com.eitu.dolpan.adapter.recycler
 
-import android.graphics.BitmapFactory
 import android.text.TextUtils
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.eitu.dolpan.adapter.BaseAdapter
 import com.eitu.dolpan.dataClass.recycler.YoutubePlaylist
 import com.eitu.dolpan.databinding.ItemRecyclerDialogYtPlBinding
 import com.eitu.dolpan.etc.ImageDownloader
-import java.io.File
 
 class AdapterYtPl: BaseAdapter<YoutubePlaylist, AdapterYtPl.Holder>() {
 
@@ -27,16 +24,7 @@ class AdapterYtPl: BaseAdapter<YoutubePlaylist, AdapterYtPl.Holder>() {
         binding.title.setText(item.title)
         binding.publishedAt.setText(item.publishedAt)
 
-        ImageDownloader.downloadImage(context, item.defaultThumb, object : ImageDownloader.ImageDownloadListener {
-            override fun onImageDownloaded(imageFile: File) {
-                val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
-                binding.thumbnail.setImageBitmap(bitmap)
-            }
-
-            override fun onImageDownloadError(errorMsg: String) {
-
-            }
-        })
+        ImageDownloader.setImage(binding.thumbnail, item.defaultThumb)
     }
 
     override fun getItemCount(): Int {

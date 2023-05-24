@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.eitu.dolpan.adapter.BaseAdapter
 import com.eitu.dolpan.dataClass.viewpager.YoutubeChannel
 import com.eitu.dolpan.databinding.ItemViewpagerRewindTopBinding
-import com.eitu.dolpan.etc.ImageDownloader_
+import com.eitu.dolpan.etc.ImageDownloader
 
 class AdapterRewindTop: BaseAdapter<YoutubeChannel, AdapterRewindTop.Holder>() {
 
@@ -21,7 +21,7 @@ class AdapterRewindTop: BaseAdapter<YoutubeChannel, AdapterRewindTop.Holder>() {
             val item = list.get(position % list.size)
             val context = holder.itemView.context
 
-            if (item.bannerImage != null) ImageDownloader_.setBanner(context, binding.banner, item.bannerImage)
+            if (item.bannerImage != null) ImageDownloader.setBanner(context, binding.banner, item.bannerImage)
 
         }
     }

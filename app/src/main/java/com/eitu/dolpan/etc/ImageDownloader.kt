@@ -1,135 +1,132 @@
 package com.eitu.dolpan.etc
-
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.os.AsyncTask
 import android.util.Log
 import android.widget.ImageView
-import com.eitu.dolpan.R
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.logging.HttpLoggingInterceptor
 import java.io.File
 import java.io.FileOutputStream
-import java.net.HttpURLConnection
-import java.net.URL
+import java.io.IOException
 import java.util.*
 
-object ImageDownloader {
-    private const val TAG = "ImageDownloader"
-    private const val CACHE_DIR_NAME = "image_cache"
-    private const val IO_BUFFER_SIZE = 8 * 1024
+class ImageDownloader {
 
-    interface ImageDownloadListener {
-        fun onImageDownloaded(imageFile: File)
-        fun onImageDownloadError(errorMsg: String)
+    private val client: OkHttpClient by lazy {
+        val loggingInterceptor = HttpLoggingInterceptor()
+        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+
+        OkHttpClient.Builder()
+            .addInterceptor(loggingInterceptor)
+            .build()
     }
 
-    @SuppressLint("StaticFieldLeak")
-    fun downloadImage(context: Context, imageUrl: String, listener: ImageDownloadListener) {
-        object : AsyncTask<String, Void, File>() {
-            @Deprecated("Deprecated in Java")
-            override fun doInBackground(vararg params: String): File {
-                val imageUrl = params[0]
-                val cacheDir = getCacheDir(context)
-                val imageFile = File(cacheDir, getFileNameFromUrl(imageUrl))
+    suspend fun downloadImage(url: String): Result<Bitmap> = withContext(Dispatchers.IO) {
+        try {
+            val request = Request.Builder()
+                .url(url)
+                .build()
 
-                if (imageFile.exists()) {
-                    Log.d(TAG, "Image cache hit: ${imageFile.absolutePath}")
-                    return imageFile
-                }
+            val response = client.newCall(request).execute()
+            val inputStream = response.body?.byteStream()
 
-                try {
-                    val url = URL(imageUrl)
-                    val connection = url.openConnection() as HttpURLConnection
-                    connection.doInput = true
-                    connection.connect()
-                    val input = connection.inputStream
-                    val bitmap = BitmapFactory.decodeStream(input)
-
-                    val outputStream = FileOutputStream(imageFile)
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-                    outputStream.flush()
-                    outputStream.close()
-
-                    Log.d(TAG, "Image downloaded and cached: ${imageFile.absolutePath}")
-                    return imageFile
-                } catch (e: Exception) {
-                    Log.e(TAG, "Error downloading image from $imageUrl", e)
-                    return imageFile
-                }
+            if (response.isSuccessful && inputStream != null) {
+                val bitmap = BitmapFactory.decodeStream(inputStream)
+                Result.Success(bitmap)
+            } else {
+                Result.Error(IOException("Error downloading image."))
             }
-
-            override fun onPostExecute(imageFile: File) {
-                if (imageFile.exists()) {
-                    listener.onImageDownloaded(imageFile)
-                } else {
-                    listener.onImageDownloadError("Error downloading image")
-                }
-            }
-        }.execute(imageUrl)
-    }
-
-    private fun getCacheDir(context: Context): File {
-        val cacheDir = context.applicationContext.cacheDir
-        val imageCacheDir = File(cacheDir, CACHE_DIR_NAME)
-        if (!imageCacheDir.exists()) {
-            imageCacheDir.mkdirs()
-        }
-        return imageCacheDir
-    }
-
-    private fun getFileNameFromUrl(url: String): String {
-        return try {
-            val lastDotIndex = url.lastIndexOf(".")
-            url.hashCode().toString() + url.substring(lastDotIndex)
         } catch (e: Exception) {
-            e.printStackTrace()
-            generateRandomId() + ".png"
+            Result.Error(IOException("Error downloading image.", e))
         }
     }
 
-    private fun generateRandomId(): String {
-        val s: String
-        s = if (Random().nextBoolean()) {
-            Random().nextInt(10).toString()
-        } else {
-            (Random().nextInt(26) + 97).toChar().toString()
-        }
-        return s
-    }
+    companion object {
 
-    fun setProfile(context: Context, profile: String, imgProfile: ImageView, sampleSize: Int) {
-        val split = profile.split("/")
-        val fileName = split[split.size - 1]
-        if (profile.isEmpty() || fileName == "null") {
-            try {
-                //imgProfile.setImageResource(R.drawable.img_no_profile)
+        fun setImage(imgView: ImageView, url: String) {
+            CoroutineScope(Dispatchers.IO).launch {
+                val result = ImageDownloader().downloadImage(url)
+                if (result is Result.Success) {
+                    val bitmap = result.data
+                    launch(Dispatchers.Main) {
+                        imgView.setImageBitmap(bitmap)
+                    }
+                }
+            }
+        }
+
+        fun setBanner(context: Context, imgView: ImageView, _url: String) {
+            CoroutineScope(Dispatchers.Main).launch {
+                val url = _url + "=w2560"
+                var bitmap: Bitmap? = null
+                val fileName = getFileNameFromUrl(url);
+                val file = File(context.cacheDir, fileName)
+                if (file.exists()) bitmap = BitmapFactory.decodeFile(file.absolutePath)
+                else {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val result = ImageDownloader().downloadImage(url)
+                        if (result is Result.Success) {
+                            bitmap = createBanner(result.data)
+                            bitmapToFile(context, bitmap!!, fileName)
+                        }
+                    }.join()
+                }
+                imgView.setImageBitmap(bitmap)
+            }
+        }
+
+        private fun createBanner(bitmap: Bitmap): Bitmap {
+            val height = (bitmap.height / 3.4).toInt()
+            val width = (height * 3.7).toInt()
+            val startY = (bitmap.height - height) / 2
+            val startX = (bitmap.width - width) / 2
+
+
+            Log.d("image", "checksize\noriginal -> ${bitmap.width} : ${bitmap.height}\nnew -> $width : $height")
+            return Bitmap.createBitmap(bitmap, startX, startY, width, height)
+        }
+
+        private fun getFileNameFromUrl(url: String): String {
+            return try {
+                url.hashCode().toString() + ".jpg"
             } catch (e: Exception) {
                 e.printStackTrace()
+                generateRandomId() + ".jpg"
             }
-        } else {
-            downloadImage(context, profile, object : ImageDownloadListener {
-                override fun onImageDownloaded(imageFile: File) {
-                    val options = BitmapFactory.Options()
-                    options.inSampleSize = sampleSize
-                    val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath, options)
-                    if (bitmap != null) {
-                        try {
-                            imgProfile.setImageBitmap(bitmap)
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-                    }
-                }
+        }
 
-                override fun onImageDownloadError(errorMsg: String) {
-                    try {
-                        //imgProfile.setImageResource(R.drawable.img_no_profile)
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                }
-            })
+        private fun generateRandomId(): String {
+            val s: String
+            s = if (Random().nextBoolean()) {
+                Random().nextInt(10).toString()
+            } else {
+                (Random().nextInt(26) + 97).toChar().toString()
+            }
+            return s
+        }
+
+        private fun bitmapToFile(context: Context, bitmap: Bitmap, strFilePath: String) {
+            val file = File(context.cacheDir, strFilePath)
+            Log.d("file", file.path)
+
+            if (!file.exists()) file.createNewFile()
+
+            val outputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+
+            outputStream.flush()
+            outputStream.close()
         }
     }
+}
+
+sealed class Result<out T> {
+    data class Success<out T>(val data: T) : Result<T>()
+    data class Error(val exception: Exception) : Result<Nothing>()
 }
