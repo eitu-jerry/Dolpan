@@ -14,7 +14,8 @@ data class YoutubeChannel(
         val customUrl: String?,
         val thumbnail: String?,
         val bannerImage: String?,
-        val type: String?
+        val type: String?,
+        val owner: String?
     ) {
 
     constructor(obj: JSONObject) : this(
@@ -28,20 +29,22 @@ data class YoutubeChannel(
         bannerImage = obj.getJSONObject("brandingSettings")
         .getJSONObject("image")
         .getString("bannerExternalUrl"),
-        type = ""
+        type = "",
+        owner = ""
     )
 
     constructor(obj: DocumentSnapshot) : this(
-        id = obj.getField<String>("id"),
-        title = obj.getField<String>("title"),
-        description = obj.getField<String>("description"),
-        customUrl = obj.getField<String>("customUrl"),
-        thumbnail = obj.getField<String>("thumbnail"),
-        bannerImage = obj.getField<String>("bannerImage"),
-        type = obj.getField<String>("type")
+        id = obj.getField("id"),
+        title = obj.getField("title"),
+        description = obj.getField("description"),
+        customUrl = obj.getField("customUrl"),
+        thumbnail = obj.getField("thumbnail"),
+        bannerImage = obj.getField("bannerImage"),
+        type = obj.getField("type"),
+        owner = obj.getField("owner")
     )
 
-    fun toHash(type: String): HashMap<String, Any?> {
+    fun toHash(type: String, owner: String): HashMap<String, Any?> {
         return hashMapOf(
             "id" to this.id,
             "title" to this.title,
@@ -50,6 +53,7 @@ data class YoutubeChannel(
             "thumbnail" to this.thumbnail,
             "bannerImage" to this.bannerImage,
             "type" to type,
+            "owner" to owner
         )
     }
 
@@ -86,14 +90,32 @@ data class YoutubeChannel(
             val channelSub = activity.resources.getStringArray(R.array.channel_sub)
             val channelReplay = activity.resources.getStringArray(R.array.channel_replay)
 
+            val ineArray = activity.resources.getStringArray(R.array.ine)
+            val jingArray = activity.resources.getStringArray(R.array.jing)
+            val lilpaArray = activity.resources.getStringArray(R.array.lilpa)
+            val jururuArray = activity.resources.getStringArray(R.array.jururu)
+            val goseguArray = activity.resources.getStringArray(R.array.gosegu)
+            val vichanArray = activity.resources.getStringArray(R.array.vichan)
+
             val hashList = ArrayList<HashMap<String, Any?>>()
             for (item in list) {
                 val id = item.id
+
                 val type: String
                 if (channelMain.contains(id)) type = "main"
                 else if (channelSub.contains(id)) type = "sub"
                 else type = "replay"
-                hashList.add(item.toHash(type))
+
+                val owner: String
+                if (ineArray.contains(id)) owner = "ine"
+                else if (jingArray.contains(id)) owner = "jing"
+                else if (lilpaArray.contains(id)) owner = "lilpa"
+                else if (jururuArray.contains(id)) owner = "jururu"
+                else if (goseguArray.contains(id)) owner = "gosegu"
+                else if (vichanArray.contains(id)) owner = "vichan"
+                else owner = "wak"
+
+                hashList.add(item.toHash(type, owner))
             }
 
             return hashList

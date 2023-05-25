@@ -187,7 +187,7 @@ class RewindFragment: BaseFragment() {
 
     override fun onStart() {
         super.onStart()
-        //youtube.getChannels()
+//        youtube.getChannels()
         getChannels()
     }
 
