@@ -34,6 +34,7 @@ class HomeActivity : BaseFragmentActivity() {
 
     private lateinit var clipboard: ClipboardManager
     private var checkClipboard = true
+    private val calledClip = ArrayList<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -122,8 +123,9 @@ class HomeActivity : BaseFragmentActivity() {
                 if (clipItem != null) {
                     val clipText = clipItem.text.toString()
                     Log.d("clip", clipText)
-                    if (clipText.startsWith("https://youtube.com/playlist?list=")) {
+                    if (clipText.startsWith("https://youtube.com/playlist?list=") && !calledClip.contains(clipText)) {
                         showYtPlNoti(clipText.substring(clipText.indexOf("=") + 1))
+                        calledClip.add(clipText)
                     }
                 }
             }

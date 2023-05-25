@@ -15,20 +15,26 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.eitu.dolpan.R
+import com.eitu.dolpan.adapter.recycler.AdapterCustomUrl
 import com.eitu.dolpan.adapter.viewpager.AdapterRewindTop
-import com.eitu.dolpan.dataClass.viewpager.YoutubeChannel
+import com.eitu.dolpan.dataClass.YoutubeMember
 import com.eitu.dolpan.databinding.FragmentRewindBinding
 import com.eitu.dolpan.view.base.BaseFragment
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class RewindFragment: BaseFragment() {
 
     private lateinit var binding: FragmentRewindBinding
 
     private val adapterBanner = AdapterRewindTop()
+    private lateinit var adapterCustomUrl: AdapterCustomUrl
 
     //banner auto scroll
     private val handler = Handler(Looper.getMainLooper())
@@ -108,6 +114,23 @@ class RewindFragment: BaseFragment() {
             }
             false
         }
+
+        adapterCustomUrl = AdapterCustomUrl(activity)
+        binding.customUrls.layoutManager = LinearLayoutManager(activity)
+        binding.customUrls.adapter = adapterCustomUrl
+        binding.customUrls.addItemDecoration(object : ItemDecoration() {
+            override fun getItemOffsets(
+                outRect: Rect,
+                view: View,
+                parent: RecyclerView,
+                state: RecyclerView.State
+            ) {
+                super.getItemOffsets(outRect, view, parent, state)
+
+                val padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5f, resources.displayMetrics)
+                outRect.top = padding.toInt()
+            }
+        })
     }
 
     fun changeTop() {
@@ -116,15 +139,17 @@ class RewindFragment: BaseFragment() {
             val position = binding.bannerPager.currentItem % list.size
             val item = list.get(position)
 
-            binding.name.text = item.title
+//            binding.name.text = item.title
+            binding.name.text = item?.name?.uppercase()
 
-            val customUrl = item.customUrl
-            if (customUrl == null || customUrl == "") binding.customUrl.text = resources.getString(R.string.noChannelCustomUrl)
-            else binding.customUrl.text = customUrl
-
-            val description = item.description
-            if (description == null || description == "") binding.description.text = resources.getString(R.string.noChannelDesc)
-            else binding.description.text = description
+//            val customUrl = item.customUrl
+//            if (customUrl == null || customUrl == "") binding.customUrl.text = resources.getString(R.string.noChannelCustomUrl)
+//            else binding.customUrl.text = customUrl
+//
+//            val description = item.description
+//            if (description == null || description == "") binding.description.text = resources.getString(R.string.noChannelDesc)
+//            else binding.description.text = description
+            item?.customUrl?.let { adapterCustomUrl.setCustomUrls(it) }
 
             colorAnimation(position)
         }
@@ -139,14 +164,24 @@ class RewindFragment: BaseFragment() {
         if (background is ColorDrawable) beforeColor = background.color
         else beforeColor = Color.TRANSPARENT
 
-        val id = adapterBanner.getList().get(position).id
-        if (resources.getStringArray(R.array.wak).contains(id)) afterColor = activity.getColor(R.color.wak)
-        else if (resources.getStringArray(R.array.ine).contains(id)) afterColor = activity.getColor(R.color.ine)
-        else if (resources.getStringArray(R.array.jing).contains(id)) afterColor = activity.getColor(R.color.jing)
-        else if (resources.getStringArray(R.array.lilpa).contains(id)) afterColor = activity.getColor(R.color.lilpa)
-        else if (resources.getStringArray(R.array.jururu).contains(id)) afterColor = activity.getColor(R.color.jururu)
-        else if (resources.getStringArray(R.array.gosegu).contains(id)) afterColor = activity.getColor(R.color.gosegu)
-        else if (resources.getStringArray(R.array.vichan).contains(id)) afterColor = activity.getColor(R.color.vichan)
+//        val id = adapterBanner.getList().get(position).id
+//        if (resources.getStringArray(R.array.wak).contains(id)) afterColor = activity.getColor(R.color.wak)
+//        else if (resources.getStringArray(R.array.ine).contains(id)) afterColor = activity.getColor(R.color.ine)
+//        else if (resources.getStringArray(R.array.jing).contains(id)) afterColor = activity.getColor(R.color.jing)
+//        else if (resources.getStringArray(R.array.lilpa).contains(id)) afterColor = activity.getColor(R.color.lilpa)
+//        else if (resources.getStringArray(R.array.jururu).contains(id)) afterColor = activity.getColor(R.color.jururu)
+//        else if (resources.getStringArray(R.array.gosegu).contains(id)) afterColor = activity.getColor(R.color.gosegu)
+//        else if (resources.getStringArray(R.array.vichan).contains(id)) afterColor = activity.getColor(R.color.vichan)
+//        else afterColor = activity.getColor(R.color.gray)
+
+        val owner = adapterBanner.getList().get(position)?.owner
+        if (owner == "wak") afterColor = activity.getColor(R.color.wak)
+        else if (owner == "ine") afterColor = activity.getColor(R.color.ine)
+        else if (owner == "jing") afterColor = activity.getColor(R.color.jing)
+        else if (owner == "lilpa") afterColor = activity.getColor(R.color.lilpa)
+        else if (owner == "jururu") afterColor = activity.getColor(R.color.jururu)
+        else if (owner == "gosegu") afterColor = activity.getColor(R.color.gosegu)
+        else if (owner == "vichan") afterColor = activity.getColor(R.color.vichan)
         else afterColor = activity.getColor(R.color.gray)
 
         val colorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), beforeColor, afterColor)
@@ -170,18 +205,39 @@ class RewindFragment: BaseFragment() {
     }
 
     private fun getChannels() {
-        if (adapterBanner.getList().isEmpty()) {
-            fdb.collection("youtubeChannel")
-                .whereEqualTo("type", "main")
-                .get()
-                .addOnSuccessListener {
-                    if (!it.isEmpty) {
-                        adapterBanner.setList(YoutubeChannel.toList(it.documents))
-                        binding.bannerPager.setCurrentItem(adapterBanner.getList().size * 10000000, false)
-                        changeTop()
-                        startHandler()
-                    }
+//        if (adapterBanner.getList().isEmpty()) {
+//            fdb.collection("youtubeChannel")
+//                .whereEqualTo("type", "main")
+//                .get()
+//                .addOnSuccessListener {
+//                    if (!it.isEmpty) {
+//                        adapterBanner.setList(YoutubeChannel.toList(it.documents))
+//                        binding.bannerPager.setCurrentItem(adapterBanner.getList().size * 10000000, false)
+//                        changeTop()
+//                        startHandler()
+//                    }
+//                }
+//        }
+        CoroutineScope(Dispatchers.IO).launch {
+            val owners = ArrayList<String>()
+            owners.add("wak")
+            owners.add("ine")
+            owners.add("jing")
+            owners.add("lilpa")
+            owners.add("jururu")
+            owners.add("gosegu")
+            owners.add("vichan")
+            owners.add("wakta")
+            val list = YoutubeMember.toList(owners)
+            if (list.isNotEmpty()) {
+                launch(Dispatchers.Main) {
+                    adapterBanner.setList(list)
+                    binding.bannerPager.setCurrentItem(list.size * 1000, false)
+                    changeTop()
+                    startHandler()
                 }
+            }
+
         }
     }
 

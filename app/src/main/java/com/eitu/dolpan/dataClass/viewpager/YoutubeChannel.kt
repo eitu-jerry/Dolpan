@@ -90,6 +90,7 @@ data class YoutubeChannel(
             val channelSub = activity.resources.getStringArray(R.array.channel_sub)
             val channelReplay = activity.resources.getStringArray(R.array.channel_replay)
 
+            val wakArray = activity.resources.getStringArray(R.array.wak)
             val ineArray = activity.resources.getStringArray(R.array.ine)
             val jingArray = activity.resources.getStringArray(R.array.jing)
             val lilpaArray = activity.resources.getStringArray(R.array.lilpa)
@@ -107,13 +108,14 @@ data class YoutubeChannel(
                 else type = "replay"
 
                 val owner: String
-                if (ineArray.contains(id)) owner = "ine"
+                if (wakArray.contains(id)) owner = "wak"
+                else if (ineArray.contains(id)) owner = "ine"
                 else if (jingArray.contains(id)) owner = "jing"
                 else if (lilpaArray.contains(id)) owner = "lilpa"
                 else if (jururuArray.contains(id)) owner = "jururu"
                 else if (goseguArray.contains(id)) owner = "gosegu"
                 else if (vichanArray.contains(id)) owner = "vichan"
-                else owner = "wak"
+                else owner = "wakta"
 
                 hashList.add(item.toHash(type, owner))
             }

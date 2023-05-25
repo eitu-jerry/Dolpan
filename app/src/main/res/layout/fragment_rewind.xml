@@ -37,6 +37,14 @@
             android:textSize="@dimen/reFragTopDesc"
             android:fontFamily="@font/korail_round_gothic_medium"/>
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/customUrls"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/name"
+            app:layout_constraintLeft_toLeftOf="@id/name"
+            android:layout_marginTop="5dp" />
+
         <TextView
             android:id="@+id/description"
             android:layout_width="wrap_content"
