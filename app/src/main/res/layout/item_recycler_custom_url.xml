@@ -4,12 +4,24 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintTop_toTopOf="@id/customUrl"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/customUrl"
+        android:src="@drawable/youtube_social_icon_red"
+        android:scaleType="fitCenter"/>
+
     <TextView
         android:id="@+id/customUrl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/logo"
+        android:layout_marginLeft="5dp"
         android:textColor="@color/white"
         android:textSize="@dimen/reFragTopDesc"
         android:fontFamily="@font/korail_round_gothic_medium" />

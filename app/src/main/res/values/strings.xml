@@ -10,7 +10,7 @@
     <string name="gosegu_main">UCV9WL7sW6_KjanYkUUaIDfQ</string>
     <string name="vichan_main">UCs6EwgxKLY9GG4QNUrP5hoQ</string>
 
-    <string name="wakta_sub">UCZOcwheypMvYN_J2oRBgt2A</string>
+    <string name="wakta_sub">UChCqDNXQddSr0ncjs_78duA</string>
     <string name="ine_sub">UCmHltryGykfakS-JmaxrNBg</string>
     <string name="jing_sub">UC-S9NE-xzcBpxOFSvsmOzAA</string>
     <string name="lilpa_sub">UC8dEJs2kpS5x2vI1X7aaUhA</string>
@@ -18,7 +18,7 @@
     <string name="gosegu_sub">UCSSPlgcyDA5eoN3hrkXpvHg</string>
     <string name="vichan_sub">UCuJUfqThFp5-k-lrHcO1dFg</string>
 
-    <string name="wak_replay">UChCqDNXQddSr0ncjs_78duA</string>
+    <string name="wak_replay">UCZOcwheypMvYN_J2oRBgt2A</string>
     <string name="ine_replay">UCBF6nBTgFN_xzrLMF9eiRhw</string>
     <string name="jing_replay">UCrN7Gb8xIZF_0ZYA1cmVNxQ</string>
     <string name="lilpa_replay">UCp_jHNjcoiXC7SlElrBmzBA</string>
@@ -126,6 +126,17 @@
         <item>@string/vichan_main</item>
         <item>@string/vichan_sub</item>
         <item>@string/vichan_replay</item>
+    </string-array>
+
+    <string-array name="member">
+        <item>wak</item>
+        <item>wakta</item>
+        <item>ine</item>
+        <item>jing</item>
+        <item>lilpa</item>
+        <item>jururu</item>
+        <item>gosegu</item>
+        <item>vichan</item>
     </string-array>
 
     <string name="noChannelCustomUrl">\@오야~ 그런건 없단다</string>

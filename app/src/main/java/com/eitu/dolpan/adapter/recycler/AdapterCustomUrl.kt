@@ -13,7 +13,7 @@ import com.eitu.dolpan.databinding.ItemRecyclerCustomUrlBinding
 
 class AdapterCustomUrl(activity: Activity): BaseAdapter<Any, AdapterCustomUrl.Holder>() {
 
-    private var customUrls: LinkedHashMap<String?, String?> = linkedMapOf()
+    private var customUrls: HashMap<String, String> = hashMapOf()
     private val activity: Activity
 
     init {
@@ -35,7 +35,7 @@ class AdapterCustomUrl(activity: Activity): BaseAdapter<Any, AdapterCustomUrl.Ho
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setCustomUrls(customUrls: LinkedHashMap<String?, String?>) {
+    fun setCustomUrls(customUrls: HashMap<String, String>) {
         this.customUrls = customUrls;
         notifyDataSetChanged()
     }
