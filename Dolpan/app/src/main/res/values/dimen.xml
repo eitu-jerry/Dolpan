@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!--Rewind Fragment-->
-    <dimen name="reFragTopName">25sp</dimen>
-    <dimen name="reFragTopDesc">14sp</dimen>
-</resources>
