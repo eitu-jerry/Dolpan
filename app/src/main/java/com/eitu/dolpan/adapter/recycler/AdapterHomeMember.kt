@@ -16,6 +16,8 @@ import com.eitu.dolpan.databinding.ItemRecyclerMemberAllBinding
 import com.eitu.dolpan.databinding.ItemViewpagerRewindTopBinding
 import com.eitu.dolpan.etc.ImageDownloader
 import com.eitu.dolpan.livedata.MemberSelected
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 class AdapterHomeMember(activity: Activity, member: MemberSelected): BaseAdapter<YoutubeMember, AdapterHomeMember.Holder>() {
 
@@ -25,6 +27,62 @@ class AdapterHomeMember(activity: Activity, member: MemberSelected): BaseAdapter
     init {
         this.activity = activity
         this.member = member
+        Firebase.firestore.collection("youtubeMember")
+            .document("wak")
+            .addSnapshotListener { value, error ->
+                Log.d("snapshot", "owner=wak isLive=${value?.get("isLive")}")
+                var position = 0
+                for (i in 0 until list.size) {
+                    if (list.get(i).owner == "wak") {
+                        position = i
+                        list.set(position, value?.toObject(YoutubeMember::class.java)!!)
+                    }
+                }
+                notifyItemChanged(position)
+            }
+        Firebase.firestore.collection("youtubeMember")
+            .document("vo_ine")
+            .addSnapshotListener { value, error ->
+                Log.d("snapshot", "owner=wak isLive=${value?.get("isLive")}")
+                var position = 0
+                for (i in 0 until list.size) {
+                    if (list.get(i).owner == "vo_ine") {
+                        position = i
+                        list.set(position, value?.toObject(YoutubeMember::class.java)!!)
+                    }
+                }
+                notifyItemChanged(position)
+            }
+//        Firebase.firestore.collection("youtubeMember")
+//            .document("wak")
+//            .addSnapshotListener { value, error ->
+//                Log.d("snapshot", "owner=$owner isLive=${value?.get("isLive")}")
+//                notifyItemChanged(position)
+//            }
+//        Firebase.firestore.collection("youtubeMember")
+//            .document("wak")
+//            .addSnapshotListener { value, error ->
+//                Log.d("snapshot", "owner=$owner isLive=${value?.get("isLive")}")
+//                notifyItemChanged(position)
+//            }
+//        Firebase.firestore.collection("youtubeMember")
+//            .document("wak")
+//            .addSnapshotListener { value, error ->
+//                Log.d("snapshot", "owner=$owner isLive=${value?.get("isLive")}")
+//                notifyItemChanged(position)
+//            }
+//        Firebase.firestore.collection("youtubeMember")
+//            .document("wak")
+//            .addSnapshotListener { value, error ->
+//                Log.d("snapshot", "owner=$owner isLive=${value?.get("isLive")}")
+//                notifyItemChanged(position)
+//            }
+//        Firebase.firestore.collection("youtubeMember")
+//            .document("wak")
+//            .addSnapshotListener { value, error ->
+//                Log.d("snapshot", "owner=$owner isLive=${value?.get("isLive")}")
+//                notifyItemChanged(position)
+//            }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
@@ -63,7 +121,6 @@ class AdapterHomeMember(activity: Activity, member: MemberSelected): BaseAdapter
             param.rightMargin = 0
             binding.isLive.visibility = View.GONE
         }
-
     }
 
     override fun getItemCount(): Int {

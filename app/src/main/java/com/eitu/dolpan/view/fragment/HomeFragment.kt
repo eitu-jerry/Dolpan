@@ -86,14 +86,14 @@ class HomeFragment: BaseFragment() {
     private var isLoop = true
     override fun onStart() {
         super.onStart()
-        CoroutineScope(Dispatchers.IO).launch {
-            while (isLoop) {
-                for (twitchId in resources.getStringArray(R.array.twitch)) {
-                    twtich.isLive(twitchId)
-                }
-                delay(2000)
-            }
-        }
+//        CoroutineScope(Dispatchers.IO).launch {
+//            while (isLoop) {
+//                for (twitchId in resources.getStringArray(R.array.twitch)) {
+//                    twtich.isLive(twitchId)
+//                }
+//                delay(2000)
+//            }
+//        }
     }
 
     override fun onDestroy() {
