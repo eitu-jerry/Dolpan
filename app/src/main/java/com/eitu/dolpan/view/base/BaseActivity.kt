@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.eitu.dolpan.network.twitch.TwitchRetrofit
 import com.eitu.dolpan.network.youtube.YoutubeRetrofit
 
 abstract class BaseActivity : AppCompatActivity(), BaseViewInterface {
@@ -27,6 +28,9 @@ abstract class BaseActivity : AppCompatActivity(), BaseViewInterface {
         set(value) {}
     override var youtube: YoutubeRetrofit
         get() = YoutubeRetrofit(this)
+        set(value) {}
+    override var twtich: TwitchRetrofit
+        get() = TwitchRetrofit(this)
         set(value) {}
 
     @SuppressLint("SourceLockedOrientationActivity")

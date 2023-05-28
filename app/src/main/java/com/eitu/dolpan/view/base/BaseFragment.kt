@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
+import com.eitu.dolpan.network.twitch.TwitchRetrofit
 import com.eitu.dolpan.network.youtube.YoutubeRetrofit
 
 abstract class BaseFragment: Fragment(), BaseViewInterface {
@@ -24,6 +25,9 @@ abstract class BaseFragment: Fragment(), BaseViewInterface {
         set(value) {}
     override var youtube: YoutubeRetrofit
         get() = (activity as BaseViewInterface).youtube
+        set(value) {}
+    override var twtich: TwitchRetrofit
+        get() = (activity as BaseViewInterface).twtich
         set(value) {}
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

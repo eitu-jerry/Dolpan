@@ -90,8 +90,8 @@ class Youtube(activity: Activity) {
                 val list = YoutubeChannel.toList(response.body())
 
                 val hashList = YoutubeChannel.toHashList(list, activity)
-                for (i in 0 until hashList.size) {
-                    val item = hashList.get(i)
+                for (i in hashList.indices) {
+                    val item = hashList[i]
                     val docId = String.format("channel%02d", i)
 
                     fdb.collection("youtubeChannel")

@@ -16,15 +16,15 @@ import kotlinx.coroutines.tasks.await
 
 class YoutubeMemberLiveData: ViewModel() {
 
-    private val _members = MutableLiveData<List<YoutubeMember?>>()
-    val members: LiveData<List<YoutubeMember?>>
+    private val _members = MutableLiveData<List<YoutubeMember>>()
+    val members: LiveData<List<YoutubeMember>>
         get() = _members
 
     init {
         _members.value = ArrayList()
     }
 
-    fun updateValue(list: List<YoutubeMember?>) {
+    fun updateValue(list: List<YoutubeMember>) {
         _members.value = list
     }
 
@@ -39,7 +39,7 @@ class YoutubeMemberLiveData: ViewModel() {
                         item.toObject(YoutubeMember::class.java)?.let { it1 -> list.add(it1) }
                     }
                     val owner = activity as ViewModelStoreOwner
-                    val members = ViewModelProvider(owner).get(YoutubeMemberLiveData::class.java)
+                    val members = ViewModelProvider(owner)[YoutubeMemberLiveData::class.java]
                     members.updateValue(list)
                 }
         }

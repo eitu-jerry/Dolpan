@@ -49,15 +49,22 @@ class ImageDownloader {
 
     companion object {
 
-        fun setImage(imgView: ImageView, url: String) {
-            CoroutineScope(Dispatchers.IO).launch {
-                val result = ImageDownloader().downloadImage(url)
-                if (result is Result.Success) {
-                    val bitmap = result.data
-                    launch(Dispatchers.Main) {
-                        imgView.setImageBitmap(bitmap)
-                    }
+        fun setImage(context: Context, imgView: ImageView, url: String) {
+            CoroutineScope(Dispatchers.Main).launch {
+                var bitmap: Bitmap? = null
+                val fileName = getFileNameFromUrl(url);
+                val file = File(context.cacheDir, fileName)
+                if (file.exists()) bitmap = BitmapFactory.decodeFile(file.absolutePath)
+                else {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val result = ImageDownloader().downloadImage(url)
+                        if (result is Result.Success) {
+                            bitmap = result.data
+                            bitmapToFile(context, bitmap!!, fileName)
+                        }
+                    }.join()
                 }
+                imgView.setImageBitmap(bitmap)
             }
         }
 
@@ -73,6 +80,26 @@ class ImageDownloader {
                         val result = ImageDownloader().downloadImage(url)
                         if (result is Result.Success) {
                             bitmap = createBanner(result.data)
+                            bitmapToFile(context, bitmap!!, fileName)
+                        }
+                    }.join()
+                }
+                imgView.setImageBitmap(bitmap)
+            }
+        }
+
+        fun setFullBanner(context: Context, imgView: ImageView, _url: String) {
+            CoroutineScope(Dispatchers.Main).launch {
+                val url = _url + "=w2560"
+                var bitmap: Bitmap? = null
+                val fileName = getFileNameFromUrl(url + "full");
+                val file = File(context.cacheDir, fileName)
+                if (file.exists()) bitmap = BitmapFactory.decodeFile(file.absolutePath)
+                else {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val result = ImageDownloader().downloadImage(url)
+                        if (result is Result.Success) {
+                            bitmap = result.data
                             bitmapToFile(context, bitmap!!, fileName)
                         }
                     }.join()

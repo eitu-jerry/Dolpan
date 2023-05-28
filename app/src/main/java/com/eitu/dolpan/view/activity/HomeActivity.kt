@@ -20,6 +20,7 @@ import com.eitu.dolpan.databinding.DialogYtPlAlreadyBinding
 import com.eitu.dolpan.databinding.DialogYtPlBinding
 import com.eitu.dolpan.databinding.NotiYtPlClipboadBinding
 import com.eitu.dolpan.databinding.TabHomeactBinding
+import com.eitu.dolpan.dialog.DialogMemberSelected
 import com.eitu.dolpan.dialog.DolpanDialog
 import com.eitu.dolpan.network.youtube.YoutubeRetrofit
 import com.eitu.dolpan.view.base.BaseFragmentActivity
@@ -40,6 +41,8 @@ class HomeActivity : BaseFragmentActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        DialogMemberSelected(this)
 
         clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
@@ -96,7 +99,7 @@ class HomeActivity : BaseFragmentActivity() {
             }
         })
 
-        binding.fragmentPager.setCurrentItem(1, false)
+        //binding.fragmentPager.setCurrentItem(1, false)
     }
 
     fun addNewTab(tab: TabLayout.Tab, text: String) {

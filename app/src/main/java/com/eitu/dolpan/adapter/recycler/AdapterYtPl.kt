@@ -21,10 +21,10 @@ class AdapterYtPl: BaseAdapter<YoutubePlaylist, AdapterYtPl.Holder>() {
         val item = list.get(position)
         val context = holder.itemView.context
 
-        binding.title.setText(item.title)
-        binding.publishedAt.setText(item.publishedAt)
+        binding.title.text = item.title
+        binding.publishedAt.text = item.publishedAt
 
-        ImageDownloader.setImage(binding.thumbnail, item.defaultThumb)
+        ImageDownloader.setImage(context, binding.thumbnail, item.defaultThumb)
     }
 
     override fun getItemCount(): Int {

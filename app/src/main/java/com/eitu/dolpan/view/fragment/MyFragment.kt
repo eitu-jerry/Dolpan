@@ -41,7 +41,6 @@ class MyFragment: BaseFragment() {
         binding.resetMember.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
                 val owners = resources.getStringArray(R.array.member)
-                val members = ArrayList<HashMap<String, Any?>?>()
                 for (owner in owners) {
                     val member = YoutubeMember.newInstance(owner)
                     if (member != null) {

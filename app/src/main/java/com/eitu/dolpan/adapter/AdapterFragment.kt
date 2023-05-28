@@ -14,12 +14,13 @@ class AdapterFragment(activity: FragmentActivity): FragmentStateAdapter(activity
     }
 
     override fun createFragment(position: Int): Fragment {
-        when(position) {
-            0 -> return HomeFragment.newInstance()
-            1 -> return RewindFragment.newInstance()
-            2 -> return HomeFragment.newInstance()
-            3 -> return HomeFragment.newInstance()
-            else -> return MyFragment.newInstance()
+        return when(position) {
+            0 -> HomeFragment.newInstance()
+            1 -> RewindFragment.newInstance()
+            2 -> HomeFragment.newInstance()
+            3 -> HomeFragment.newInstance()
+            else -> MyFragment.newInstance()
         }
+//        return MyFragment.newInstance()
     }
 }

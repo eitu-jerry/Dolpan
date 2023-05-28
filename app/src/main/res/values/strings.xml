@@ -139,6 +139,16 @@
         <item>vichan</item>
     </string-array>
 
+    <string-array name="twitch">
+        <item>woowakgood</item>
+        <item>vo_ine</item>
+        <item>jingburger</item>
+        <item>lilpaaaaaa</item>
+        <item>cotton__123</item>
+        <item>gosegugosegu</item>
+        <item>viichan6</item>
+    </string-array>
+
     <string name="noChannelCustomUrl">\@오야~ 그런건 없단다</string>
 
     <string name="noChannelDesc">이런, 채널 설명이 없지만 알잘딱하세요</string>
