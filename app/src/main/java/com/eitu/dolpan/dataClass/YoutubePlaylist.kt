@@ -1,4 +1,4 @@
-package com.eitu.dolpan.dataClass.recycler
+package com.eitu.dolpan.dataClass
 
 import org.json.JSONObject
 

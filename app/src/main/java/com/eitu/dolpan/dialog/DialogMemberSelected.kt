@@ -1,6 +1,7 @@
 package com.eitu.dolpan.dialog
 
 import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.ColorFilter
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import com.eitu.dolpan.R
 import com.eitu.dolpan.databinding.DialogMemberSelectedBinding
 import com.eitu.dolpan.etc.ImageDownloader
 import com.eitu.dolpan.livedata.MemberSelected
+import com.eitu.dolpan.view.activity.ChatActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
@@ -37,6 +39,13 @@ class DialogMemberSelected(activity: Activity) {
             it.profileImage?.let { profile -> ImageDownloader.setImage(activity, binding.profile, profile) }
             binding.name.text = it.name
             binding.desc.text = it.description
+
+            binding.profile.setOnClickListener { v ->
+                val intent = Intent(activity, ChatActivity::class.java)
+                intent.putExtra("owner", it.owner)
+                activity.startActivity(intent)
+                bottomSheetDialog.dismiss()
+            }
 
             bottomSheetDialog.setContentView(binding.root)
             bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED

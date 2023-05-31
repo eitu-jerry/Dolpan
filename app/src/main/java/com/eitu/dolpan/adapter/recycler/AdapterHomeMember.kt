@@ -8,8 +8,10 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.eitu.dolpan.R
 import com.eitu.dolpan.adapter.BaseAdapter
 import com.eitu.dolpan.dataClass.YoutubeMember
 import com.eitu.dolpan.databinding.ItemRecyclerMemberAllBinding
@@ -41,48 +43,96 @@ class AdapterHomeMember(activity: Activity, member: MemberSelected): BaseAdapter
                 notifyItemChanged(position)
             }
         Firebase.firestore.collection("youtubeMember")
-            .document("vo_ine")
+            .document("ine")
             .addSnapshotListener { value, error ->
                 Log.d("snapshot", "owner=wak isLive=${value?.get("isLive")}")
                 var position = 0
                 for (i in 0 until list.size) {
-                    if (list.get(i).owner == "vo_ine") {
+                    if (list.get(i).owner == "ine") {
                         position = i
                         list.set(position, value?.toObject(YoutubeMember::class.java)!!)
                     }
                 }
                 notifyItemChanged(position)
             }
-//        Firebase.firestore.collection("youtubeMember")
-//            .document("wak")
-//            .addSnapshotListener { value, error ->
-//                Log.d("snapshot", "owner=$owner isLive=${value?.get("isLive")}")
-//                notifyItemChanged(position)
-//            }
-//        Firebase.firestore.collection("youtubeMember")
-//            .document("wak")
-//            .addSnapshotListener { value, error ->
-//                Log.d("snapshot", "owner=$owner isLive=${value?.get("isLive")}")
-//                notifyItemChanged(position)
-//            }
-//        Firebase.firestore.collection("youtubeMember")
-//            .document("wak")
-//            .addSnapshotListener { value, error ->
-//                Log.d("snapshot", "owner=$owner isLive=${value?.get("isLive")}")
-//                notifyItemChanged(position)
-//            }
-//        Firebase.firestore.collection("youtubeMember")
-//            .document("wak")
-//            .addSnapshotListener { value, error ->
-//                Log.d("snapshot", "owner=$owner isLive=${value?.get("isLive")}")
-//                notifyItemChanged(position)
-//            }
-//        Firebase.firestore.collection("youtubeMember")
-//            .document("wak")
-//            .addSnapshotListener { value, error ->
-//                Log.d("snapshot", "owner=$owner isLive=${value?.get("isLive")}")
-//                notifyItemChanged(position)
-//            }
+        Firebase.firestore.collection("youtubeMember")
+            .document("jing")
+            .addSnapshotListener { value, error ->
+                Log.d("snapshot", "owner=jing isLive=${value?.get("isLive")}")
+                var position = 0
+                for (i in 0 until list.size) {
+                    if (list.get(i).owner == "jing") {
+                        position = i
+                        list.set(position, value?.toObject(YoutubeMember::class.java)!!)
+                    }
+                }
+                notifyItemChanged(position)
+            }
+        Firebase.firestore.collection("youtubeMember")
+            .document("lilpa")
+            .addSnapshotListener { value, error ->
+                Log.d("snapshot", "owner=lilpa isLive=${value?.get("isLive")}")
+                var position = 0
+                for (i in 0 until list.size) {
+                    if (list.get(i).owner == "lilpa") {
+                        position = i
+                        list.set(position, value?.toObject(YoutubeMember::class.java)!!)
+                    }
+                }
+                notifyItemChanged(position)
+            }
+        Firebase.firestore.collection("youtubeMember")
+            .document("jururu")
+            .addSnapshotListener { value, error ->
+                Log.d("snapshot", "owner=jururu isLive=${value?.get("isLive")}")
+                var position = 0
+                for (i in 0 until list.size) {
+                    if (list.get(i).owner == "jururu") {
+                        position = i
+                        list.set(position, value?.toObject(YoutubeMember::class.java)!!)
+                    }
+                }
+                notifyItemChanged(position)
+            }
+        Firebase.firestore.collection("youtubeMember")
+            .document("gosegu")
+            .addSnapshotListener { value, error ->
+                Log.d("snapshot", "owner=gosegu isLive=${value?.get("isLive")}")
+                var position = 0
+                for (i in 0 until list.size) {
+                    if (list.get(i).owner == "gosegu") {
+                        position = i
+                        list.set(position, value?.toObject(YoutubeMember::class.java)!!)
+                    }
+                }
+                notifyItemChanged(position)
+            }
+        Firebase.firestore.collection("youtubeMember")
+            .document("vichan")
+            .addSnapshotListener { value, error ->
+                Log.d("snapshot", "owner=vichan isLive=${value?.get("isLive")}")
+                var position = 0
+                for (i in 0 until list.size) {
+                    if (list.get(i).owner == "vichan") {
+                        position = i
+                        list.set(position, value?.toObject(YoutubeMember::class.java)!!)
+                    }
+                }
+                notifyItemChanged(position)
+            }
+        Firebase.firestore.collection("youtubeMember")
+            .document("wakta")
+            .addSnapshotListener { value, error ->
+                Log.d("snapshot", "owner=wakta isLive=${value?.get("isLive")}")
+                var position = 0
+                for (i in 0 until list.size) {
+                    if (list.get(i).owner == "wakta") {
+                        position = i
+                        list.set(position, value?.toObject(YoutubeMember::class.java)!!)
+                    }
+                }
+                notifyItemChanged(position)
+            }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
@@ -114,12 +164,18 @@ class AdapterHomeMember(activity: Activity, member: MemberSelected): BaseAdapter
         val param = binding.layoutInfo.layoutParams as ConstraintLayout.LayoutParams
         val margin = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10f, context.resources.displayMetrics)
         if (item.isLive) {
-            param.rightMargin = margin.toInt()
-            binding.isLive.visibility = View.VISIBLE
+            if (binding.isLive.visibility == View.INVISIBLE) {
+                param.rightMargin = margin.toInt()
+                binding.isLive.visibility = View.VISIBLE
+                binding.isLive.startAnimation(AnimationUtils.loadAnimation(context, R.anim.anim_show_is_live))
+            }
         }
         else {
-            param.rightMargin = 0
-            binding.isLive.visibility = View.GONE
+            if (binding.isLive.visibility == View.VISIBLE) {
+                param.rightMargin = 0
+                binding.isLive.visibility = View.INVISIBLE
+                binding.isLive.startAnimation(AnimationUtils.loadAnimation(context, R.anim.anim_hide_is_live))
+            }
         }
     }
 

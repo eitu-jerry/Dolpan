@@ -12,7 +12,9 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.get
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ItemAnimator
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.eitu.dolpan.R
 import com.eitu.dolpan.adapter.recycler.AdapterHomeMember
 import com.eitu.dolpan.databinding.FragmentHomeBinding
@@ -71,6 +73,7 @@ class HomeFragment: BaseFragment() {
                 outRect.top = padding
             }
         })
+        (binding.recyclerAllMember.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
     }
 
     private fun setMemberLiveData() {

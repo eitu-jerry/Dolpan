@@ -1,6 +1,5 @@
 package com.eitu.dolpan.dataClass
 
-import com.eitu.dolpan.dataClass.viewpager.YoutubeChannel
 import com.google.firebase.firestore.PropertyName
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -27,7 +26,7 @@ data class YoutubeMember(
     ){
 
     companion object {
-        suspend fun newInstance(owner: String): HashMap<String, Any?>? {
+        suspend fun toHash(owner: String): HashMap<String, Any?>? {
             val result = Firebase.firestore
                 .collection("youtubeChannel")
                 .whereEqualTo("owner", owner)
@@ -119,17 +118,10 @@ data class YoutubeMember(
             }
         }
 
-        fun getChannelString(channel: YoutubeChannel): String {
+        private fun getChannelString(channel: YoutubeChannel): String {
             return "${channel.id},${channel.title},${channel.customUrl}"
         }
 
-        suspend fun toList(owners: List<String>): List<YoutubeMember?> {
-            val list = ArrayList<YoutubeMember?>()
-            for (owner in owners) {
-                //list.add(newInstance(owner))
-            }
-            return list
-        }
     }
 
 }

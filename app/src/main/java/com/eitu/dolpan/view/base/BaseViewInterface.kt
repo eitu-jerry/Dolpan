@@ -17,7 +17,7 @@ interface BaseViewInterface {
     val fdb: FirebaseFirestore
         get() = Firebase.firestore
     var youtube: YoutubeRetrofit
-    var twtich: TwitchRetrofit
+    var twitch: TwitchRetrofit
 
     fun init()
 

@@ -1,9 +1,8 @@
-package com.eitu.dolpan.dataClass.viewpager
+package com.eitu.dolpan.dataClass
 
 import android.app.Activity
 import com.eitu.dolpan.R
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.PropertyName
 import com.google.firebase.firestore.ktx.getField
 import org.json.JSONObject
 

@@ -73,4 +73,11 @@ dependencies {
 
     //firebase firestore database
     implementation 'com.google.firebase:firebase-firestore-ktx'
+
+    //web crawling
+    implementation 'org.jsoup:jsoup:1.13.1'
+    implementation group: 'org.htmlunit', name: 'htmlunit3-android', version: '3.1.0'
+
+    //네이버 로그인
+    implementation 'com.navercorp.nid:oauth-jdk8:5.1.1'
 }

@@ -26,8 +26,8 @@ abstract class BaseFragment: Fragment(), BaseViewInterface {
     override var youtube: YoutubeRetrofit
         get() = (activity as BaseViewInterface).youtube
         set(value) {}
-    override var twtich: TwitchRetrofit
-        get() = (activity as BaseViewInterface).twtich
+    override var twitch: TwitchRetrofit
+        get() = (activity as BaseViewInterface).twitch
         set(value) {}
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

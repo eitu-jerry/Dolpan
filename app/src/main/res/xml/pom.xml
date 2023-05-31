@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dependency>
+    <groupId>org.htmlunit</groupId>
+    <artifactId>htmlunit3-android</artifactId>
+    <version>3.1.0</version>
+</dependency>

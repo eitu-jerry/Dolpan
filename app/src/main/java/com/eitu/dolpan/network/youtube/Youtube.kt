@@ -3,13 +3,10 @@ package com.eitu.dolpan.network.youtube
 import android.app.Activity
 import android.content.SharedPreferences
 import android.util.Log
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.eitu.dolpan.R
 import com.eitu.dolpan.adapter.recycler.AdapterYtPl
-import com.eitu.dolpan.dataClass.YoutubeMember
-import com.eitu.dolpan.dataClass.recycler.YoutubePlaylist
-import com.eitu.dolpan.dataClass.viewpager.YoutubeChannel
+import com.eitu.dolpan.dataClass.YoutubePlaylist
+import com.eitu.dolpan.dataClass.YoutubeChannel
 import com.eitu.dolpan.databinding.DialogYtPlCheckBinding
 import com.eitu.dolpan.dialog.DolpanDialog
 import com.eitu.dolpan.livedata.YoutubeMemberLiveData
@@ -20,7 +17,6 @@ import com.eitu.dolpan.view.base.BaseViewInterface
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.tasks.await
 
 class Youtube(activity: Activity) {
 

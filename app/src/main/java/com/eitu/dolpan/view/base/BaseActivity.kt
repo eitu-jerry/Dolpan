@@ -29,7 +29,7 @@ abstract class BaseActivity : AppCompatActivity(), BaseViewInterface {
     override var youtube: YoutubeRetrofit
         get() = YoutubeRetrofit(this)
         set(value) {}
-    override var twtich: TwitchRetrofit
+    override var twitch: TwitchRetrofit
         get() = TwitchRetrofit(this)
         set(value) {}
 

@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Dolpan</string>
 
+    <string name="n_c_id">OkiIIuv7R4ZpBli1l4_2</string>
+    <string name="n_c_secret">M1l1MT2apk</string>
+
     <string name="wak_main">UCBkyj16n2snkRg1BAzpovXQ</string>
     <string name="wakta_main">UCzh4yY8rl38knH33XpNqXbQ</string>
     <string name="ine_main">UCroM00J2ahCN6k-0-oAiDxg</string>
