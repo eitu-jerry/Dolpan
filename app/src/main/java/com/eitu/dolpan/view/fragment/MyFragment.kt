@@ -23,6 +23,8 @@ import kotlinx.coroutines.tasks.await
 import org.jsoup.Jsoup
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
 class MyFragment: BaseFragment() {
