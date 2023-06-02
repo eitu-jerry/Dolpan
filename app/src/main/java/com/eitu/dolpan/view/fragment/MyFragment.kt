@@ -31,6 +31,8 @@ class MyFragment: BaseFragment() {
 
     private lateinit var binding: FragmentMyBinding
 
+    private val logBuilder = java.lang.StringBuilder()
+
     companion object {
         fun newInstance(): MyFragment {
             return MyFragment()
@@ -88,16 +90,17 @@ class MyFragment: BaseFragment() {
         webView.settings.userAgentString = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246"
         webView.addJavascriptInterface(MyJavascriptInterface(), "Android")
         webView.loadUrl("https://cafe.naver.com/ca-fe/cafes/27842958/members/Iep9BEdfIxd759MU7JgtSg")
+        //webView.loadUrl("https://cafe.naver.com/steamindiegame")
 
-        val twitchArray = resources.getStringArray(R.array.twitch)
-        CoroutineScope(Dispatchers.IO).launch {
-            while (true) {
-                for (id in twitchArray) {
-                    twitch.isLive(id)
-                }
-                delay(3000)
-            }
-        }
+//        val twitchArray = resources.getStringArray(R.array.twitch)
+//        CoroutineScope(Dispatchers.IO).launch {
+//            while (true) {
+//                for (id in twitchArray) {
+//                    twitch.isLive(id)
+//                }
+//                delay(3000)
+//            }
+//        }
 
     }
 
@@ -117,6 +120,7 @@ class MyFragment: BaseFragment() {
         fun getHtml(html: String) { //위 자바스크립트가 호출되면 여기로 html이 반환됨
             CoroutineScope(Dispatchers.Main).launch {
                 val dateString_ = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date(System.currentTimeMillis()))
+                logBuilder.append("getHtml: $dateString_").append("\n")
                 Log.d("getHtml", dateString_)
                 val fdb = Firebase.firestore
                 val list = Jsoup.parse(html).select("div#app div div table tbody tr")
@@ -142,6 +146,7 @@ class MyFragment: BaseFragment() {
                             .isEmpty) {
 
                         val article = "articleId=$articleId href=$href title=$title date=$date"
+                        logBuilder.append("addItem: $article").append("\n")
                         Log.d("item", article)
 
                         fdb.collection("item")
@@ -156,6 +161,7 @@ class MyFragment: BaseFragment() {
                     }
 
                 }
+                binding.log.text = logBuilder
                 binding.webView.loadUrl("https://cafe.naver.com/ca-fe/cafes/27842958/members/Iep9BEdfIxd759MU7JgtSg")
             }
         }

@@ -32,7 +32,7 @@ class ChatActivity: BaseActivity() {
 
     private fun initRecycler() {
         val layoutManager = LinearLayoutManager(this)
-        layoutManager.reverseLayout = false
+        layoutManager.reverseLayout = true
         layoutManager.stackFromEnd = true
         binding.recyclerView.layoutManager = layoutManager
         binding.recyclerView.adapter = adapter

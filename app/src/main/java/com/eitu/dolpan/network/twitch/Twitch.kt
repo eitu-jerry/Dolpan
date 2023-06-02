@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.SharedPreferences
 import android.os.Build
 import android.util.Log
+import com.eitu.dolpan.R
 import com.eitu.dolpan.network.ResponseController
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -50,22 +51,23 @@ class Twitch(activity: Activity, whenFail: Call<JsonObject>) {
                         val data = result.getJSONArray("data").getJSONObject(0)
                         val id = data.getString("broadcaster_login")
                         val isLive = data.getBoolean("is_live")
-                        Log.d("id", id)
-                        Firebase.firestore.collection("youtubeMember")
-                            .document(when(id) {
-                                "woowakgood" -> "wak"
-                                "vo_ine" -> "ine"
-                                "jingburger" -> "jing"
-                                "lilpaaaaaa" -> "lilpa"
-                                "cotton__123" -> "jururu"
-                                "gosegugosegu" -> "gosegu"
-                                "viichan6" -> "vichan"
-                                else -> ""
-                            })
-                            .update("isLive", isLive)
-                            .addOnSuccessListener {
-                                Log.d(id, "isLive = $isLive")
-                            }
+                        if (activity.resources.getStringArray(R.array.twitch).contains(id)) {
+                            Firebase.firestore.collection("youtubeMember")
+                                .document(when(id) {
+                                    "woowakgood" -> "wak"
+                                    "vo_ine" -> "ine"
+                                    "jingburger" -> "jing"
+                                    "lilpaaaaaa" -> "lilpa"
+                                    "cotton__123" -> "jururu"
+                                    "gosegugosegu" -> "gosegu"
+                                    "viichan6" -> "vichan"
+                                    else -> ""
+                                })
+                                .update("isLive", isLive)
+                                .addOnSuccessListener {
+                                    Log.d("twitchLive", "$id's live is $isLive")
+                                }
+                        }
                     }
                 } catch (e: java.lang.Exception) {
                     e.printStackTrace()

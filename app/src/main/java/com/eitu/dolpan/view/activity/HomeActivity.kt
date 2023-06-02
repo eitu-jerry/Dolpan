@@ -28,6 +28,10 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class HomeActivity : BaseFragmentActivity() {
 
@@ -73,7 +77,7 @@ class HomeActivity : BaseFragmentActivity() {
         initFragment()
     }
 
-    fun initFragment() {
+    private fun initFragment() {
         val adapter = AdapterFragment(this);
         binding.fragmentPager.isUserInputEnabled = false
         binding.fragmentPager.adapter = adapter
@@ -99,12 +103,11 @@ class HomeActivity : BaseFragmentActivity() {
             }
         })
 
-        //binding.fragmentPager.setCurrentItem(1, false)
     }
 
-    fun addNewTab(tab: TabLayout.Tab, text: String) {
+    private fun addNewTab(tab: TabLayout.Tab, text: String) {
         val _binding = TabHomeactBinding.inflate(layoutInflater)
-        _binding.text.setText(text)
+        _binding.text.text = text
         _binding.image.setImageResource(R.drawable.img_rewind)
         tab.customView = _binding.root
 
@@ -142,7 +145,7 @@ class HomeActivity : BaseFragmentActivity() {
         _binding.root.layoutParams = ConstraintLayout.LayoutParams(
             ConstraintLayout.LayoutParams.MATCH_PARENT,
             ConstraintLayout.LayoutParams.WRAP_CONTENT)
-        _binding.clipboard.setText(playlistId)
+        _binding.clipboard.text = playlistId
         _binding.btnGet.setOnClickListener {
             viewIsRemoved = true
             binding.root.removeView(_binding.root)
@@ -210,8 +213,23 @@ class HomeActivity : BaseFragmentActivity() {
         }
     }
 
+    private var isLoop = true
+    override fun onStart() {
+        super.onStart()
+        isLoop = true
+        CoroutineScope(Dispatchers.IO).launch {
+//            while (isLoop) {
+//                for (twitchId in resources.getStringArray(R.array.twitch)) {
+//                    twitch.isLive(twitchId)
+//                }
+//                delay(2000)
+//            }
+        }
+    }
+
     override fun onStop() {
         super.onStop()
         checkClipboard = true
+        isLoop = false
     }
 }
