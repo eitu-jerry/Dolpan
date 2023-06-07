@@ -1,11 +1,13 @@
 package com.eitu.dolpan.dataClass
 
+import android.util.Log
 import com.eitu.dolpan.adapter.recycler.AdapterChatByDate
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.PropertyName
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlin.math.log
 
 data class FireStoreItem(
     @PropertyName("owner")
@@ -37,10 +39,13 @@ data class FireStoreItem(
                 }
         }
 
-        fun toList(items: List<DocumentSnapshot>): List<FireStoreItem> {
+        fun toList(items: List<DocumentSnapshot>): ArrayList<FireStoreItem> {
             val list = ArrayList<FireStoreItem>()
             for (item in items) {
-                item.toObject(FireStoreItem::class.java)?.let { list.add(it) }
+                item.toObject(FireStoreItem::class.java)?.let {
+                    list.add(it)
+                    Log.d("item", it.title)
+                }
             }
             return list
         }

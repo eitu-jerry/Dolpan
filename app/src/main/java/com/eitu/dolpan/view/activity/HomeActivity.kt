@@ -1,5 +1,6 @@
 package com.eitu.dolpan.view.activity
 
+import android.annotation.SuppressLint
 import android.content.ClipDescription
 import android.content.ClipboardManager
 import android.content.Context
@@ -10,6 +11,10 @@ import android.util.Log
 import android.view.animation.Animation
 import android.view.animation.Animation.AnimationListener
 import android.view.animation.AnimationUtils
+import android.webkit.CookieManager
+import android.webkit.JavascriptInterface
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
@@ -32,6 +37,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import org.jsoup.Jsoup
+import org.jsoup.select.Elements
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class HomeActivity : BaseFragmentActivity() {
 
@@ -213,18 +225,147 @@ class HomeActivity : BaseFragmentActivity() {
         }
     }
 
+    private lateinit var articleList: ArrayList<String>
+    private val articleMap = HashMap<String, String>()
+    private val articleDateMap = HashMap<String, String>()
+    private var index = 0
+    private lateinit var webView: WebView
+    @SuppressLint("SetJavaScriptEnabled")
+    fun findAndSetDateTime() {
+        webView = WebView(this@HomeActivity)
+        webView.layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.MATCH_PARENT)
+        binding.root.addView(webView)
+        webView.settings.javaScriptEnabled = true
+        webView.settings.domStorageEnabled = true
+        webView.settings.userAgentString = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246"
+        webView.webViewClient = object : WebViewClient() {
+
+            override fun onPageFinished(view: WebView?, url: String?) {
+                CookieManager.getInstance().flush()
+                if (url!!.contains("javascript")) {
+                    Log.d("javascript", "onPageFinished")
+                }
+                else {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        delay(1000)
+                        view?.loadUrl("javascript:window.Android.getHtml(document.getElementsByTagName('html')[0].innerHTML);"); //<html></html> 사이에 있는 모든 html을 넘겨준다.
+                    }
+                }
+            }
+        }
+        webView.addJavascriptInterface(MyInterface(), "Android")
+
+
+        Firebase.firestore.collection("item")
+            .whereEqualTo("date", "")
+            .get()
+            .addOnSuccessListener {
+                if (!it.isEmpty) {
+                    for (d in it.documents) {
+                        val id = d.id
+                        val article = d.getString("id")
+                        articleMap[article!!] = id
+                    }
+                    articleList = ArrayList(articleMap.keys)
+                    webView.loadUrl("https://m.cafe.naver.com/ca-fe/web/cafes/steamindiegame/articles/${articleList[index]}?useCafeId=false")
+                }
+            }
+    }
+
+    inner class MyInterface {
+        @JavascriptInterface
+        fun getHtml(html: String) {
+            CoroutineScope(Dispatchers.IO).launch {
+                delay(1000)
+                val doc = Jsoup.parse(html)
+                val date = doc.select("div#app span.date.font_l")
+
+                var url = ""
+                val metaTags = doc.select("meta[property]");
+                for(meta in metaTags) {
+                    if(meta.attr("property").equals("og:url")){
+                        url = meta.attr("content")
+                    }
+                }
+
+                var article = ""
+                if (url != "") {
+                    val split = url.split("/")
+                    article = split[split.size - 1]
+                    article = article.substring(0, article.indexOf("?"))
+                }
+
+                var dateText = date.text()
+                if (dateText != "") {
+                    val fromFormat = SimpleDateFormat("yyyy.MM.dd. HH:mm", Locale.getDefault())
+                    val toFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+                    dateText = dateText.replace("작성일", "")
+                    dateText = toFormat.format(fromFormat.parse(dateText))
+
+                }
+                else {
+                    Log.d("date", "text is null ${date.text()}")
+                }
+
+                if (!articleDateMap.containsKey(article) || articleDateMap[article] == "") {
+                    Log.d("date", dateText)
+                    Log.d("article", article)
+                    articleDateMap[article] = dateText
+                }
+                if (articleMap.containsKey(article)) {
+                    index += 1
+                    if (index < articleList.size) {
+                        try {
+                            CoroutineScope(Dispatchers.Main).launch {
+                                delay(2000)
+                                try {
+                                    webView.loadUrl("https://m.cafe.naver.com/ca-fe/web/cafes/steamindiegame/articles/${articleList[index]}?useCafeId=false")
+                                } catch (e: java.lang.Exception) {
+                                    e.printStackTrace()
+                                }
+
+                            }
+
+                        } catch (e: java.lang.Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+                    else {
+                        for ((key, value) in articleDateMap) {
+                            val id = articleMap[key]
+                            if (id != null) {
+                                Firebase.firestore.collection("item")
+                                    .document(id)
+                                    .update("date", value)
+                                    .addOnSuccessListener {
+                                        Log.d(id, value)
+                                    }
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+
+    fun checkTwitchisLive() {
+        CoroutineScope(Dispatchers.IO).launch {
+            while (isLoop) {
+                for (twitchId in resources.getStringArray(R.array.twitch)) {
+                    twitch.isLive(twitchId)
+                }
+                delay(2000)
+            }
+        }
+    }
+
     private var isLoop = true
     override fun onStart() {
         super.onStart()
         isLoop = true
-        CoroutineScope(Dispatchers.IO).launch {
-//            while (isLoop) {
-//                for (twitchId in resources.getStringArray(R.array.twitch)) {
-//                    twitch.isLive(twitchId)
-//                }
-//                delay(2000)
-//            }
-        }
+        //findAndSetDateTime()
+        //checkTwitchisLive()
     }
 
     override fun onStop() {

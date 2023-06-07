@@ -11,8 +11,10 @@ import androidx.lifecycle.ViewModelStoreOwner
 import com.eitu.dolpan.R
 import com.eitu.dolpan.databinding.DialogMemberSelectedBinding
 import com.eitu.dolpan.etc.ImageDownloader
+import com.eitu.dolpan.etc.IntentHelper
 import com.eitu.dolpan.livedata.MemberSelected
 import com.eitu.dolpan.view.activity.ChatActivity
+import com.eitu.dolpan.view.activity.ChatActivity_
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
@@ -41,9 +43,9 @@ class DialogMemberSelected(activity: Activity) {
             binding.desc.text = it.description
 
             binding.profile.setOnClickListener { v ->
-                val intent = Intent(activity, ChatActivity::class.java)
+                val intent = Intent(activity, ChatActivity_::class.java)
                 intent.putExtra("owner", it.owner)
-                activity.startActivity(intent)
+                IntentHelper.intentDetail(activity, intent = intent)
                 bottomSheetDialog.dismiss()
             }
 

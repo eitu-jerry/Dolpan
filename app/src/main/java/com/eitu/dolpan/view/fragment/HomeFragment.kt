@@ -57,7 +57,7 @@ class HomeFragment: BaseFragment() {
     }
 
     private fun initMemberAll() {
-        adapterAll = AdapterHomeMember(activity, ViewModelProvider(activity as ViewModelStoreOwner)[MemberSelected::class.java])
+        adapterAll = AdapterHomeMember(activity)
         binding.recyclerAllMember.layoutManager = LinearLayoutManager(activity)
         binding.recyclerAllMember.adapter = adapterAll
         binding.recyclerAllMember.addItemDecoration(object : ItemDecoration() {

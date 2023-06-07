@@ -4,52 +4,78 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <Button
-        android:visibility="invisible"
-        android:id="@+id/resetChannel"
+    <ScrollView
+        android:id="@+id/layoutTop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:text="채널 초기화" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <Button
-        android:visibility="invisible"
-        android:id="@+id/resetMember"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/resetChannel"
-        android:layout_marginTop="5dp"
-        android:text="멤버 초기화" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-    <Button
-        android:visibility="invisible"
-        android:id="@+id/getNaverAccessToken"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/resetMember"
-        android:layout_marginTop="5dp"
-        android:text="액세스토큰" />
+            <Button
+                android:id="@+id/resetChannel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:text="채널 초기화" />
+
+            <Button
+                android:id="@+id/resetMember"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:text="멤버 초기화" />
+
+            <Button
+                android:visibility="gone"
+                android:id="@+id/getNaverAccessToken"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:text="액세스토큰" />
+
+            <Button
+                android:id="@+id/loadNaver"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:text="네이버" />
+
+            <Button
+                android:id="@+id/loadCrawl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:text="크롤링" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
     <WebView
         android:id="@+id/webView"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/log"
-        android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/layoutTop"
+        app:layout_constraintBottom_toTopOf="@id/scrollView"/>
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
         app:layout_constraintTop_toBottomOf="@id/webView"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:background="@color/black"
-        android:textColorHint="@color/white" />
+        android:background="@color/black">
 
-    <View
-        android:visibility="invisible"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/black" />
+        <TextView
+            android:id="@+id/log"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white" />
+
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

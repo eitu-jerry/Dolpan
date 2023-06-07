@@ -25,6 +25,17 @@ data class YoutubeMember(
     val twitch: String = ""
     ){
 
+    override fun toString(): String {
+        return "name:$name\n" +
+                "profileImage:$profileImage\n" +
+                "bannerImage:$bannerImage\n" +
+                "description:$description\n" +
+                "channel:$channel\n" +
+                "owner:$owner\n" +
+                "isLive:$isLive\n" +
+                "twitch:$twitch\n"
+    }
+
     companion object {
         suspend fun toHash(owner: String): HashMap<String, Any?>? {
             val result = Firebase.firestore
