@@ -96,98 +96,102 @@ class Twitch(activity: Activity, whenFail: Call<JsonObject>) {
             override fun onSuccess(response: Response<Array<TwitchChatItem>>) {
                 val item = response.body()?.get(0)
                 if (item != null) {
-                    val channelId = item.data.channel.id
-                    val messages = item.data.channel.recentChatMessages
-
                     try {
-                        for (message in messages) {
-                            if (message == null) continue
-                            val senderId = message.sender.id
-                            if (twitchIds.contains(senderId)) {
-                                val sender: String
-                                val owner: String
+                        val channelId = item.data.channel.id
+                        val messages = item.data.channel.recentChatMessages
 
-                                when(senderId) {
-                                    wak -> {
-                                        sender = "우왁굳"
-                                        owner = "wak"
-                                    }
-                                    ine -> {
-                                        sender = "아이네"
-                                        owner = "ine"
-                                    }
-                                    jing -> {
-                                        sender = "징버거"
-                                        owner = "jing"
-                                    }
-                                    lilpa -> {
-                                        sender = "릴파"
-                                        owner = "lilipa"
-                                    }
-                                    jururu -> {
-                                        sender = "주르르"
-                                        owner = "jururu"
-                                    }
-                                    gosegu -> {
-                                        sender = "고세구"
-                                        owner = "gosegu"
-                                    }
-                                    vichan -> {
-                                        sender = "비챤"
-                                        owner = "vichan"
-                                    }
-                                    else -> {
-                                        sender = "나"
-                                        owner = "wak"
-                                    }
-                                }
+                        try {
+                            for (message in messages) {
+                                if (message == null) continue
+                                val senderId = message.sender.id
+                                if (twitchIds.contains(senderId)) {
+                                    val sender: String
+                                    val owner: String
 
-                                val sendTo: String = when(channelId) {
-                                    wak -> "우왁굳"
-                                    ine -> "아이네"
-                                    jing -> "징버거"
-                                    lilpa -> "릴파"
-                                    jururu -> "주르르"
-                                    gosegu -> "고세구"
-                                    else -> "비챤"
-                                }
-
-                                val title: String
-                                val content = message.content.text
-                                title = if (senderId == channelId) {
-                                    content
-                                } else {
-                                    "$sender -> $sendTo\n\n$content"
-                                }
-
-                                Log.d("date", message.sentAt)
-                                val from = fromDate.parse(message.sentAt)
-                                from.time = from.time + (1000 * 60 * 60 * 9)
-                                val date = toDate.format(from)
-
-                                Firebase.firestore.collection("item")
-                                    .document(message.id)
-                                    .get()
-                                    .addOnSuccessListener {
-                                        if (!it.exists()) {
-                                            Firebase.firestore.collection("item")
-                                                .document(message.id)
-                                                .set(hashMapOf(
-                                                    Pair("owner", owner),
-                                                    Pair("type", "twitchChat"),
-                                                    Pair("title", title),
-                                                    Pair("date", date)
-                                                ))
-                                                .addOnSuccessListener {
-                                                    Log.d("from ${message.sender.displayName}", title)
-                                                }
+                                    when(senderId) {
+                                        wak -> {
+                                            sender = "우왁굳"
+                                            owner = "wak"
+                                        }
+                                        ine -> {
+                                            sender = "아이네"
+                                            owner = "ine"
+                                        }
+                                        jing -> {
+                                            sender = "징버거"
+                                            owner = "jing"
+                                        }
+                                        lilpa -> {
+                                            sender = "릴파"
+                                            owner = "lilipa"
+                                        }
+                                        jururu -> {
+                                            sender = "주르르"
+                                            owner = "jururu"
+                                        }
+                                        gosegu -> {
+                                            sender = "고세구"
+                                            owner = "gosegu"
+                                        }
+                                        vichan -> {
+                                            sender = "비챤"
+                                            owner = "vichan"
+                                        }
+                                        else -> {
+                                            sender = "나"
+                                            owner = "wak"
                                         }
                                     }
 
+                                    val sendTo: String = when(channelId) {
+                                        wak -> "우왁굳"
+                                        ine -> "아이네"
+                                        jing -> "징버거"
+                                        lilpa -> "릴파"
+                                        jururu -> "주르르"
+                                        gosegu -> "고세구"
+                                        else -> "비챤"
+                                    }
 
+                                    val title: String
+                                    val content = message.content.text
+                                    title = if (senderId == channelId) {
+                                        content
+                                    } else {
+                                        "$sender -> $sendTo\n\n$content"
+                                    }
+
+                                    Log.d("date", message.sentAt)
+                                    val from = fromDate.parse(message.sentAt)
+                                    from.time = from.time + (1000 * 60 * 60 * 9)
+                                    val date = toDate.format(from)
+
+                                    Firebase.firestore.collection("item")
+                                        .document(message.id)
+                                        .get()
+                                        .addOnSuccessListener {
+                                            if (!it.exists()) {
+                                                Firebase.firestore.collection("item")
+                                                    .document(message.id)
+                                                    .set(hashMapOf(
+                                                        Pair("owner", owner),
+                                                        Pair("type", "twitchChat"),
+                                                        Pair("title", title),
+                                                        Pair("date", date)
+                                                    ))
+                                                    .addOnSuccessListener {
+                                                        Log.d("from ${message.sender.displayName}", title)
+                                                    }
+                                            }
+                                        }
+
+
+                                }
                             }
+                        } catch (e: java.lang.Exception) {
+                            e.printStackTrace()
                         }
-                    } catch (e: java.lang.Exception) {
+                    } catch (e: Exception) {
                         e.printStackTrace()
                     }
                 }

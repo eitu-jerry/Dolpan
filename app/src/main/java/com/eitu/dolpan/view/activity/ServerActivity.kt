@@ -101,19 +101,19 @@ class ServerActivity: BaseActivity() {
             CoroutineScope(Dispatchers.IO).launch {
                 while (true) {
                     twitch.getChat(member)
-                    delay(300)
+                    delay(200)
                 }
             }
         }
     }
 
     private fun checkTwitchisLive() {
-        CoroutineScope(Dispatchers.IO).launch {
-            while (true) {
-                for (twitchId in resources.getStringArray(R.array.twitch)) {
+        for (twitchId in resources.getStringArray(R.array.twitch)) {
+            CoroutineScope(Dispatchers.IO).launch {
+                while (true) {
                     twitch.isLive(twitchId)
+                    delay(10000)
                 }
-                delay(2000)
             }
         }
     }
