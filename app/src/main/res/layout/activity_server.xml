@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/resetChannel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="15dp"
+                    android:text="채널 초기화" />
+
+                <Button
+                    android:id="@+id/resetMember"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="15dp"
+                    android:text="멤버 초기화" />
+
+                <Button
+                    android:visibility="gone"
+                    android:id="@+id/getNaverAccessToken"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="15dp"
+                    android:text="액세스토큰" />
+
+                <Button
+                    android:id="@+id/loadNaver"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="15dp"
+                    android:text="네이버" />
+
+                <Button
+                    android:id="@+id/loadCrawl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="15dp"
+                    android:text="크롤링" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                tools:ignore="WebViewLayout">
+
+                <WebView
+                    android:id="@+id/webViewWak"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp" />
+
+                <TextView
+                    android:id="@+id/txtWak"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                tools:ignore="WebViewLayout">
+
+                <TextView
+                    android:id="@+id/txtIne"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <WebView
+                    android:visibility="gone"
+                    android:id="@+id/webViewIne"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                tools:ignore="WebViewLayout">
+
+                <TextView
+                    android:id="@+id/txtJing"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <WebView
+                    android:visibility="gone"
+                    android:id="@+id/webViewJing"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                tools:ignore="WebViewLayout">
+
+                <TextView
+                    android:id="@+id/txtLilpa"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <WebView
+                    android:visibility="gone"
+                    android:id="@+id/webViewLilpa"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                tools:ignore="WebViewLayout">
+
+                <TextView
+                    android:id="@+id/txtJururu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <WebView
+                    android:visibility="gone"
+                    android:id="@+id/webViewJururu"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                tools:ignore="WebViewLayout">
+
+                <TextView
+                    android:id="@+id/txtGosegu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <WebView
+                    android:visibility="gone"
+                    android:id="@+id/webViewGosegu"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                tools:ignore="WebViewLayout">
+
+                <TextView
+                    android:id="@+id/txtVichan"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <WebView
+                    android:visibility="gone"
+                    android:id="@+id/webViewVichan"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

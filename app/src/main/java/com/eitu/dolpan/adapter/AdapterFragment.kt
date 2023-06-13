@@ -17,8 +17,8 @@ class AdapterFragment(activity: FragmentActivity): FragmentStateAdapter(activity
         return when(position) {
             0 -> HomeFragment.newInstance()
             1 -> RewindFragment.newInstance()
-            2 -> HomeFragment.newInstance()
-            3 -> HomeFragment.newInstance()
+            2 -> MyFragment.newInstance()
+            3 -> MyFragment.newInstance()
             else -> MyFragment.newInstance()
         }
 //        return MyFragment.newInstance()

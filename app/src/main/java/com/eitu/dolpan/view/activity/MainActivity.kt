@@ -22,6 +22,7 @@ class MainActivity : BaseActivity() {
     }
 
     override fun init() {
+//        IntentHelper.intentDetail(this, Intent(this, ServerActivity::class.java))
         IntentHelper.intentDetail(this, Intent(this, HomeActivity::class.java))
     }
 

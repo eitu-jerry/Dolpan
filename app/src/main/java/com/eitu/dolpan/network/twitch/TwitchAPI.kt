@@ -1,5 +1,7 @@
 package com.eitu.dolpan.network.twitch
 
+import com.eitu.dolpan.dataClass.twitchChat.TwitchChatItem
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import retrofit2.Call
 import retrofit2.http.*
@@ -7,6 +9,7 @@ import retrofit2.http.*
 interface TwitchAPI {
 
     object ID {
+        const val chat_client_id = "kimne78kx3ncx6brgo4mv6wki5h1ko"
         const val client_id = "ywq2id2tpi7ke78l8allk0ui8ksh5c"
         const val client_secret = "pa22487zs2b9pozb6n88hofhzh0ruv"
         const val grant_type = "client_credentials"
@@ -21,5 +24,9 @@ interface TwitchAPI {
     @Headers("Client-ID: ${ID.client_id}")
     @GET("helix/search/channels")
     fun isLive(@Header("Authorization") accessToken: String, @Query("query") id:String): Call<String>
+
+    @Headers("Client-ID: ${ID.chat_client_id}")
+    @POST("gql")
+    fun getChat(@Body payload: List<JsonObject>): Call<Array<TwitchChatItem>>
 
 }

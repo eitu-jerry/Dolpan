@@ -270,13 +270,14 @@ class HomeActivity : BaseFragmentActivity() {
                     webView.loadUrl("https://m.cafe.naver.com/ca-fe/web/cafes/steamindiegame/articles/${articleList[index]}?useCafeId=false")
                 }
             }
+
+        //webView.loadUrl("https://www.twitch.tv/popout/vo_ine/viewercard/vo_ine")
     }
 
     inner class MyInterface {
         @JavascriptInterface
         fun getHtml(html: String) {
             CoroutineScope(Dispatchers.IO).launch {
-                delay(1000)
                 val doc = Jsoup.parse(html)
                 val date = doc.select("div#app span.date.font_l")
 
@@ -366,6 +367,7 @@ class HomeActivity : BaseFragmentActivity() {
         isLoop = true
         //findAndSetDateTime()
         //checkTwitchisLive()
+        twitch.getChat("woowakgood")
     }
 
     override fun onStop() {

@@ -22,6 +22,9 @@
             android:name=".view.activity.ChatActivity"
             android:exported="false" />
         <activity
+            android:name=".view.activity.ServerActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.activity.HomeActivity"
             android:exported="false" />
         <activity

@@ -214,28 +214,30 @@ class ChatActivity_: ComponentActivity() {
                     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                         Text(text = "${member?.name}", fontSize = 13.sp)
                         ChatText(item)
-                        Row(
+                        if (item.type == "naverCafe") {
+                            Row(
 
-                            horizontalArrangement = Arrangement.spacedBy(5.dp),
-                            modifier = Modifier.clickable {
-                                try {
-                                    val intent = Intent(Intent.ACTION_VIEW)
-                                    intent.data = Uri.parse("navercafe://cafe/27842958/${item.id}")
-                                    startActivity(intent)
-                                } catch (e: java.lang.Exception) {
-                                    val intent = Intent(Intent.ACTION_VIEW)
-                                    intent.data =
-                                        Uri.parse("https://m.cafe.naver.com/ca-fe/web/cafes/steamindiegame/articles/${item.id}?useCafeId=false")
-                                    startActivity(intent)
+                                horizontalArrangement = Arrangement.spacedBy(5.dp),
+                                modifier = Modifier.clickable {
+                                    try {
+                                        val intent = Intent(Intent.ACTION_VIEW)
+                                        intent.data = Uri.parse("navercafe://cafe/27842958/${item.id}")
+                                        startActivity(intent)
+                                    } catch (e: java.lang.Exception) {
+                                        val intent = Intent(Intent.ACTION_VIEW)
+                                        intent.data =
+                                            Uri.parse("https://m.cafe.naver.com/ca-fe/web/cafes/steamindiegame/articles/${item.id}?useCafeId=false")
+                                        startActivity(intent)
+                                    }
                                 }
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.icon_cafe_64),
+                                    contentDescription = "iconCafe",
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Text(text = "카페앱에서 보기", fontSize = 11.sp, modifier = Modifier.align(Alignment.CenterVertically))
                             }
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.icon_cafe_64),
-                                contentDescription = "iconCafe",
-                                modifier = Modifier.size(18.dp)
-                            )
-                            Text(text = "카페앱에서 보기", fontSize = 11.sp, modifier = Modifier.align(Alignment.CenterVertically))
                         }
                     }
                 }
