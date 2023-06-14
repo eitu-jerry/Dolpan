@@ -13,32 +13,25 @@ import retrofit2.Call
 import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.HashMap
 
 class Twitch(activity: Activity, whenFail: Call<JsonObject>) {
 
     private val activity: Activity
     private val whenFail: Call<JsonObject>
-    private val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
+    private val liveMap = hashMapOf(
+        Pair("woowakgood", false),
+        Pair("vo_ine", false),
+        Pair("jingburger", false),
+        Pair("lilpaaaaaa", false),
+        Pair("cotton__123", false),
+        Pair("gosegugosegu", false),
+        Pair("viichan6", false),
+    )
 
     init {
         this.activity = activity
         this.whenFail = whenFail
-    }
-
-    fun getAccessToken(call: Call<JsonObject>) {
-        call.enqueue(object : ResponseController<JsonObject>("getAccessToken", object : OnResponseListener<JsonObject> {
-            override fun onSuccess(response: Response<JsonObject>) {
-                val accessToken = response.body()?.get("access_token")?.asString
-                Log.d("getAccessToken", accessToken.toString())
-                activity.getSharedPreferences("PRFS", 0).edit()
-                    .putString("twitchAccessToken", accessToken)
-                    .apply()
-            }
-
-            override fun onFail(response: Response<JsonObject>) {
-                Log.d("getAccessToken", "fail")
-            }
-        }){})
     }
 
     fun isLive(call: Call<String>) {
@@ -51,21 +44,26 @@ class Twitch(activity: Activity, whenFail: Call<JsonObject>) {
                         val id = data.getString("broadcaster_login")
                         val isLive = data.getBoolean("is_live")
                         if (activity.resources.getStringArray(R.array.twitch).contains(id)) {
-                            Firebase.firestore.collection("youtubeMember")
-                                .document(when(id) {
-                                    "woowakgood" -> "wak"
-                                    "vo_ine" -> "ine"
-                                    "jingburger" -> "jing"
-                                    "lilpaaaaaa" -> "lilpa"
-                                    "cotton__123" -> "jururu"
-                                    "gosegugosegu" -> "gosegu"
-                                    "viichan6" -> "vichan"
-                                    else -> ""
-                                })
-                                .update("isLive", isLive)
-                                .addOnSuccessListener {
-                                    Log.d("twitchLive", "$id's live is $isLive")
-                                }
+                            if (isLive != liveMap[id]) {
+                                liveMap[id] = isLive
+                                Log.d("twitchLive", "$id's live is $isLive")
+                                Firebase.firestore
+                                    .collection("youtubeMember")
+                                    .document(when(id) {
+                                        "woowakgood" -> "wak"
+                                        "vo_ine" -> "ine"
+                                        "jingburger" -> "jing"
+                                        "lilpaaaaaa" -> "lilpa"
+                                        "cotton__123" -> "jururu"
+                                        "gosegugosegu" -> "gosegu"
+                                        "viichan6" -> "vichan"
+                                        else -> ""
+                                    })
+                                    .update("isLive", isLive)
+                                    .addOnSuccessListener {
+                                        Log.d("twitchLive", "$id's live is updated to $isLive")
+                                    }
+                            }
                         }
                     }
                 } catch (e: java.lang.Exception) {
@@ -74,7 +72,23 @@ class Twitch(activity: Activity, whenFail: Call<JsonObject>) {
             }
 
             override fun onFail(response: Response<String>) {
-                getAccessToken(whenFail)
+                getAccessToken()
+            }
+        }){})
+    }
+
+    private fun getAccessToken() {
+        whenFail.enqueue(object : ResponseController<JsonObject>("getAccessToken", object : OnResponseListener<JsonObject> {
+            override fun onSuccess(response: Response<JsonObject>) {
+                val accessToken = response.body()?.get("access_token")?.asString
+                Log.d("getAccessToken", accessToken.toString())
+                activity.getSharedPreferences("PRFS", 0).edit()
+                    .putString("twitchAccessToken", accessToken)
+                    .apply()
+            }
+
+            override fun onFail(response: Response<JsonObject>) {
+                Log.d("getAccessToken", "fail")
             }
         }){})
     }
@@ -161,8 +175,7 @@ class Twitch(activity: Activity, whenFail: Call<JsonObject>) {
                                         "$sender -> $sendTo\n\n$content"
                                     }
 
-                                    Log.d("date", message.sentAt)
-                                    val from = fromDate.parse(message.sentAt)
+                                    val from = fromDate.parse(message.sentAt)!!
                                     from.time = from.time + (1000 * 60 * 60 * 9)
                                     val date = toDate.format(from)
 
