@@ -12,3 +12,4 @@
 - DataBinding
 - Jetpack Compose
 - Glide & Glide-Compose
+- Coroutine
