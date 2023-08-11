@@ -1,29 +1,9 @@
 package com.eitu.dolpan.view.activity
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.webkit.CookieManager
-import android.webkit.JavascriptInterface
-import android.webkit.WebView
-import android.webkit.WebViewClient
-import com.eitu.dolpan.R
-import com.eitu.dolpan.dataClass.YoutubeMember
 import com.eitu.dolpan.databinding.ActivityServerBinding
-import com.eitu.dolpan.databinding.FragmentMyBinding
 import com.eitu.dolpan.view.base.BaseActivity
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import com.navercorp.nid.NaverIdLoginSDK
-import com.navercorp.nid.oauth.OAuthLoginCallback
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import org.jsoup.Jsoup
-import java.text.SimpleDateFormat
 import java.util.*
 
 class ServerActivity: BaseActivity() {

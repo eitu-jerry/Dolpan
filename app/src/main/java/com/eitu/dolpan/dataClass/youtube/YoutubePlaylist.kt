@@ -1,4 +1,4 @@
-package com.eitu.dolpan.dataClass
+package com.eitu.dolpan.dataClass.youtube
 
 import org.json.JSONObject
 

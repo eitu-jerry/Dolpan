@@ -2,7 +2,7 @@ package com.eitu.dolpan.network.repo
 
 import android.content.Context
 import com.eitu.dolpan.R
-import com.eitu.dolpan.dataClass.YoutubeMember
+import com.eitu.dolpan.dataClass.firestore.YoutubeMember
 import com.eitu.dolpan.dataClass.youtube.YoutubeChannel
 import com.eitu.dolpan.network.DolpanResult
 import com.eitu.dolpan.network.api.YoutubeAPI_
@@ -94,7 +94,8 @@ class YoutubeRepo @Inject constructor(
 
         fdb.collection("youtubeMember")
             .document(owner)
-            .set(YoutubeMember(
+            .set(
+                YoutubeMember(
                 name = name,
                 profileImage = main?.snippet?.thumbnails?.medium?.url,
                 bannerImage = main?.brandSettings?.bannerImage?.bannerUrl,
@@ -103,7 +104,8 @@ class YoutubeRepo @Inject constructor(
                 owner = owner,
                 isLive = false,
                 twitch = twitch
-            ))
+            )
+            )
     }
 
     private fun getNameAndTwitch(owner: String) : Array<String> {

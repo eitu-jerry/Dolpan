@@ -1,4 +1,4 @@
-package com.eitu.dolpan.dataClass
+package com.eitu.dolpan.dataClass.firestore
 
 import com.google.firebase.firestore.PropertyName
 import com.google.firebase.firestore.ktx.firestore

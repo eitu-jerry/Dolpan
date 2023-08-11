@@ -1,51 +1,21 @@
 package com.eitu.dolpan.view.activity
 
-import android.annotation.SuppressLint
 import android.content.ClipDescription
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.View
-import android.view.animation.Animation
-import android.view.animation.Animation.AnimationListener
-import android.view.animation.AnimationUtils
-import android.webkit.CookieManager
-import android.webkit.JavascriptInterface
-import android.webkit.WebView
-import android.webkit.WebViewClient
-import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
-import com.eitu.dolpan.R
 import com.eitu.dolpan.adapter.AdapterFragment
 import com.eitu.dolpan.databinding.ActivityHomeBinding
-import com.eitu.dolpan.databinding.DialogYtPlAlreadyBinding
-import com.eitu.dolpan.databinding.DialogYtPlBinding
-import com.eitu.dolpan.databinding.NotiYtPlClipboadBinding
-import com.eitu.dolpan.databinding.TabHomeactBinding
 import com.eitu.dolpan.view.dialog.DialogMemberSelected
-import com.eitu.dolpan.view.dialog.DolpanDialog
-import com.eitu.dolpan.livedata.MemberSelected
+import com.eitu.dolpan.viewModel.MemberSelected
 import com.eitu.dolpan.view.base.BaseActivity
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayoutMediator
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import org.jsoup.Jsoup
-import java.text.SimpleDateFormat
-import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 @AndroidEntryPoint
 class HomeActivity : BaseActivity() {

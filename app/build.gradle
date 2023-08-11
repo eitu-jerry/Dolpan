@@ -138,6 +138,24 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.15.1'
     //glide-compose
     implementation "com.github.bumptech.glide:compose:1.0.0-alpha.1"
+
+    /**
+     * Paging3
+     */
+
+    def paging_version = "3.1.1"
+
+    implementation "androidx.paging:paging-runtime:$paging_version"
+
+    // alternatively - without Android dependencies for tests
+    testImplementation "androidx.paging:paging-common:$paging_version"
+
+    // optional - Jetpack Compose integration
+    implementation "androidx.paging:paging-compose:3.2.0-rc01"
+
+    /**
+     * Paging3 End
+     */
 }
 
 // Allow references to generated code

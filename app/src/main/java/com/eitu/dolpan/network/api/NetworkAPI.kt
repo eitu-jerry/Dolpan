@@ -1,11 +1,10 @@
 package com.eitu.dolpan.network.api
 
-import com.eitu.dolpan.dataClass.TwitchChatPayload
-import com.eitu.dolpan.dataClass.TwitchLive
-import com.eitu.dolpan.dataClass.TwitchToken
-import com.eitu.dolpan.dataClass.twitchChat.TwitchChatItem
+import com.eitu.dolpan.dataClass.twitch.chat.request.TwitchChatPayload
+import com.eitu.dolpan.dataClass.twitch.TwitchLive
+import com.eitu.dolpan.dataClass.twitch.TwitchToken
+import com.eitu.dolpan.dataClass.twitch.chat.response.TwitchChatItem
 import com.eitu.dolpan.dataClass.youtube.YoutubeChannels
-import com.google.gson.JsonObject
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.*

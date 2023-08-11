@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.eitu.dolpan.adapter.BaseAdapter
-import com.eitu.dolpan.dataClass.YoutubeMember
+import com.eitu.dolpan.dataClass.firestore.YoutubeMember
 import com.eitu.dolpan.databinding.ItemViewpagerRewindTopBinding
 import com.eitu.dolpan.etc.ImageDownloader
 

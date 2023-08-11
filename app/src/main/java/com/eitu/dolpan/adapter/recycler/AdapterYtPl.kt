@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.eitu.dolpan.adapter.BaseAdapter
-import com.eitu.dolpan.dataClass.YoutubePlaylist
+import com.eitu.dolpan.dataClass.youtube.YoutubePlaylist
 import com.eitu.dolpan.databinding.ItemRecyclerDialogYtPlBinding
 import com.eitu.dolpan.etc.ImageDownloader
 

@@ -7,7 +7,5 @@ import com.google.firebase.ktx.Firebase
 interface BaseViewInterface {
 
     val TAG : String
-    val fdb: FirebaseFirestore
-        get() = Firebase.firestore
 
 }

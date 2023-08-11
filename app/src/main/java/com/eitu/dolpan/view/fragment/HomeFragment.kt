@@ -12,15 +12,15 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import com.eitu.dolpan.R
 import com.eitu.dolpan.adapter.recycler.AdapterHomeMember
 import com.eitu.dolpan.databinding.FragmentHomeBinding
-import com.eitu.dolpan.livedata.MemberSelected
-import com.eitu.dolpan.livedata.YoutubeMemberModel
+import com.eitu.dolpan.viewModel.MemberSelected
+import com.eitu.dolpan.viewModel.Members
 import com.eitu.dolpan.view.base.BaseFragment
 
 class HomeFragment: BaseFragment() {
 
     private lateinit var binding: FragmentHomeBinding
 
-    private val ytMember: YoutubeMemberModel by viewModels()
+    private val ytMember: Members by viewModels()
     private val memberSelected : MemberSelected by activityViewModels()
 
     private val adapterAll: AdapterHomeMember by lazy {

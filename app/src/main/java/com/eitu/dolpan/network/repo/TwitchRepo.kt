@@ -3,7 +3,7 @@ package com.eitu.dolpan.network.repo
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.core.content.edit
-import com.eitu.dolpan.dataClass.TwitchChatPayload
+import com.eitu.dolpan.dataClass.twitch.chat.request.TwitchChatPayload
 import com.eitu.dolpan.network.DolpanResult
 import com.eitu.dolpan.network.api.TwitchCheckLiveAPI
 import com.eitu.dolpan.network.api.TwitchGetChatAPI

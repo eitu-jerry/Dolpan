@@ -4,7 +4,7 @@
     <data>
         <variable
             name="member"
-            type="com.eitu.dolpan.dataClass.YoutubeMember" />
+            type="com.eitu.dolpan.dataClass.firestore.YoutubeMember" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"

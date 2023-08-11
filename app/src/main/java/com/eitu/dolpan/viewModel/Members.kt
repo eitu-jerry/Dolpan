@@ -1,7 +1,7 @@
-package com.eitu.dolpan.livedata
+package com.eitu.dolpan.viewModel
 
 import androidx.lifecycle.*
-import com.eitu.dolpan.dataClass.YoutubeMember
+import com.eitu.dolpan.dataClass.firestore.YoutubeMember
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
-class YoutubeMemberModel: ViewModel() {
+class Members: ViewModel() {
 
     private val _members = MutableLiveData<List<YoutubeMember>>(emptyList())
     val members: LiveData<List<YoutubeMember>>

@@ -4,10 +4,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.eitu.dolpan.adapter.BaseAdapter
-import com.eitu.dolpan.dataClass.FireStoreItem
+import com.eitu.dolpan.dataClass.firestore.Chat
 import com.eitu.dolpan.databinding.ItemRecyclerChatByDateBinding
 
-class AdapterChatByDate: BaseAdapter<FireStoreItem, AdapterChatByDate.Holder>() {
+class AdapterChatByDate: BaseAdapter<Chat, AdapterChatByDate.Holder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         return Holder(ItemRecyclerChatByDateBinding.inflate(LayoutInflater.from(parent.context)))
@@ -25,7 +25,7 @@ class AdapterChatByDate: BaseAdapter<FireStoreItem, AdapterChatByDate.Holder>() 
         return list.size
     }
 
-    fun addItem(item: FireStoreItem) {
+    fun addItem(item: Chat) {
         list.add(item)
         notifyItemInserted(list.size - 1)
     }

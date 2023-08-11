@@ -1,4 +1,4 @@
-package com.eitu.dolpan.dataClass
+package com.eitu.dolpan.dataClass.twitch.chat.request
 
 import com.google.gson.annotations.SerializedName
 

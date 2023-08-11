@@ -1,28 +1,21 @@
 package com.eitu.dolpan.adapter.recycler
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.eitu.dolpan.R
 import com.eitu.dolpan.adapter.BaseAdapter
-import com.eitu.dolpan.dataClass.YoutubeMember
+import com.eitu.dolpan.dataClass.firestore.YoutubeMember
 import com.eitu.dolpan.databinding.ItemRecyclerMemberAllBinding
-import com.eitu.dolpan.databinding.ItemViewpagerRewindTopBinding
-import com.eitu.dolpan.etc.ImageDownloader
-import com.eitu.dolpan.livedata.MemberSelected
-import com.eitu.dolpan.livedata.YoutubeMemberModel
+import com.eitu.dolpan.viewModel.MemberSelected
+import com.eitu.dolpan.viewModel.Members
 import com.eitu.dolpan.view.base.BaseActivity
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -30,7 +23,7 @@ import com.google.firebase.ktx.Firebase
 class AdapterHomeMember(
     val activity: BaseActivity,
     val memberSelected: MemberSelected,
-    ytMembers : YoutubeMemberModel
+    ytMembers : Members
 ) : BaseAdapter<YoutubeMember, AdapterHomeMember.Holder>() {
 
     init {

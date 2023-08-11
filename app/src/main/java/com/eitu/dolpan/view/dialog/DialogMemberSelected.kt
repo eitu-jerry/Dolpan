@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.eitu.dolpan.databinding.DialogMemberSelectedBinding
 import com.eitu.dolpan.etc.IntentHelper
-import com.eitu.dolpan.livedata.MemberSelected
+import com.eitu.dolpan.viewModel.MemberSelected
 import com.eitu.dolpan.view.activity.ChatActivity
 import com.eitu.dolpan.view.base.BaseActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
