@@ -10,15 +10,8 @@ import com.google.firebase.ktx.Firebase
 
 interface BaseViewInterface {
 
-    var activity: Activity
-    var TAG : String
-    var sp : SharedPreferences
-    var editor : SharedPreferences.Editor
+    val TAG : String
     val fdb: FirebaseFirestore
         get() = Firebase.firestore
-    var youtube: YoutubeRetrofit
-    var twitch: TwitchRetrofit
-
-    fun init()
 
 }

@@ -2,6 +2,7 @@ package com.eitu.dolpan.network.twitch
 
 import android.app.Activity
 import android.content.SharedPreferences
+import com.eitu.dolpan.network.api.TwitchAPI
 import retrofit2.Retrofit
 import okhttp3.OkHttpClient
 import retrofit2.converter.gson.GsonConverterFactory
@@ -9,7 +10,6 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.util.concurrent.TimeUnit
 import com.eitu.dolpan.view.base.BaseViewInterface
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 
 class TwitchRetrofit(activity: Activity) {
@@ -19,7 +19,7 @@ class TwitchRetrofit(activity: Activity) {
     private val getChatUrl = "https://gql.twitch.tv/"
 
     private val activity: Activity
-    private val sp: SharedPreferences
+    private lateinit var sp: SharedPreferences
     private val fdb: FirebaseFirestore
     private var client: OkHttpClient
     private val twitch: Twitch
@@ -28,7 +28,7 @@ class TwitchRetrofit(activity: Activity) {
 
     init {
         this.activity = activity
-        this.sp = (activity as BaseViewInterface).sp
+        //this.sp = (activity as BaseViewInterface).sp
         this.fdb = (activity as BaseViewInterface).fdb
         client = OkHttpClient.Builder()
             .connectTimeout(1, TimeUnit.MINUTES)

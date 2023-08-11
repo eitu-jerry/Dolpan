@@ -34,7 +34,9 @@ class HomeFragment: BaseFragment() {
 
     private lateinit var members: YoutubeMemberLiveData
 
-    private lateinit var adapterAll: AdapterHomeMember
+    private val adapterAll: AdapterHomeMember by lazy {
+        AdapterHomeMember(requireActivity())
+    }
 
     companion object {
         fun newInstance(): HomeFragment {
@@ -42,57 +44,38 @@ class HomeFragment: BaseFragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun setBinding(inflater: LayoutInflater): View {
         binding = FragmentHomeBinding.inflate(inflater)
         return binding.root
     }
 
     override fun init() {
         initMemberAll()
-        setMemberLiveData()
     }
 
     private fun initMemberAll() {
-        adapterAll = AdapterHomeMember(activity)
-        binding.recyclerAllMember.layoutManager = LinearLayoutManager(activity)
-        binding.recyclerAllMember.adapter = adapterAll
-        binding.recyclerAllMember.addItemDecoration(object : ItemDecoration() {
-            override fun getItemOffsets(
-                outRect: Rect,
-                view: View,
-                parent: RecyclerView,
-                state: RecyclerView.State
-            ) {
-                super.getItemOffsets(outRect, view, parent, state)
+        binding.recyclerAllMember.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = adapterAll
+            addItemDecoration(MyItemDecoration())
 
-                val padding = resources.getDimensionPixelOffset(R.dimen.homeMemberPadding)
-                outRect.top = padding
-            }
-        })
-        (binding.recyclerAllMember.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
-    }
-
-    private fun setMemberLiveData() {
-        val modelOwner = activity as ViewModelStoreOwner
-        members = ViewModelProvider(modelOwner)[YoutubeMemberLiveData::class.java]
-        members.members.observe(activity as LifecycleOwner) {
-            Log.d("reset", SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date(System.currentTimeMillis())))
-            adapterAll.setList(it)
+            val animator = itemAnimator as SimpleItemAnimator
+            animator.supportsChangeAnimations = false
         }
-        YoutubeMemberLiveData.reset(activity)
     }
 
-    private var isLoop = true
-    override fun onStart() {
-        super.onStart()
+    inner class MyItemDecoration : ItemDecoration() {
+        override fun getItemOffsets(
+            outRect: Rect,
+            view: View,
+            parent: RecyclerView,
+            state: RecyclerView.State
+        ) {
+            super.getItemOffsets(outRect, view, parent, state)
+
+            val padding = resources.getDimensionPixelOffset(R.dimen.homeMemberPadding)
+            outRect.top = padding
+        }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        isLoop = false
-    }
 }

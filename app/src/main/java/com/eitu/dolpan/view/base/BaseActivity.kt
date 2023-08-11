@@ -8,34 +8,24 @@ import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.eitu.dolpan.network.twitch.TwitchRetrofit
 import com.eitu.dolpan.network.youtube.YoutubeRetrofit
 
 abstract class BaseActivity : AppCompatActivity(), BaseViewInterface {
 
-    override var activity: Activity
-        get() = this
-        set(value) {}
-    override var TAG: String
+    override val TAG: String
         get() = this.javaClass.simpleName
-        set(value) {}
-    override var sp: SharedPreferences
-        get() = getSharedPreferences("PRFS", MODE_PRIVATE)
-        set(value) {}
-    override var editor: SharedPreferences.Editor
-        get() = sp.edit()
-        set(value) {}
-    override var youtube: YoutubeRetrofit
-        get() = YoutubeRetrofit(this)
-        set(value) {}
-    override var twitch: TwitchRetrofit
-        get() = TwitchRetrofit(this)
-        set(value) {}
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(TAG, "onCreate")
         super.onCreate(savedInstanceState)
+        setBinding()?.let {
+            setContentView(it)
+            init()
+        }
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
 
@@ -64,7 +54,7 @@ abstract class BaseActivity : AppCompatActivity(), BaseViewInterface {
         Log.d(TAG, "onDestroy")
     }
 
-    override fun init() {
-        TODO("Not yet implemented")
-    }
+    abstract fun setBinding() : View?
+    abstract fun init()
+
 }

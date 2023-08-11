@@ -4,35 +4,27 @@ import android.app.Activity
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.eitu.dolpan.network.twitch.TwitchRetrofit
 import com.eitu.dolpan.network.youtube.YoutubeRetrofit
 
 abstract class BaseFragment: Fragment(), BaseViewInterface {
 
-    override var activity: Activity
-        get() = requireActivity()
-        set(value) {}
-    override var TAG: String
+    override val TAG: String
         get() = javaClass.simpleName
-        set(value) {}
-    override var sp: SharedPreferences
-        get() = (activity as BaseViewInterface).sp
-        set(value) {}
-    override var editor: SharedPreferences.Editor
-        get() = sp.edit()
-        set(value) {}
-    override var youtube: YoutubeRetrofit
-        get() = (activity as BaseViewInterface).youtube
-        set(value) {}
-    override var twitch: TwitchRetrofit
-        get() = (activity as BaseViewInterface).twitch
-        set(value) {}
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        Log.d(TAG, "onCreateView")
+        val root = setBinding(inflater)
         init()
+        return root
     }
 
     override fun onStart() {
@@ -59,5 +51,8 @@ abstract class BaseFragment: Fragment(), BaseViewInterface {
         super.onDestroy()
         Log.d(TAG, "onDestroy")
     }
+
+    abstract fun setBinding(inflater: LayoutInflater) : View
+    abstract fun init()
 
 }

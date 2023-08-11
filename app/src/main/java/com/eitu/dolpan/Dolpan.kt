@@ -9,15 +9,17 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.persistentCacheSettings
 import com.google.firebase.ktx.Firebase
 import com.navercorp.nid.NaverIdLoginSDK
+import dagger.hilt.android.HiltAndroidApp
 
+@HiltAndroidApp
 class Dolpan: Application() {
 
     override fun onCreate() {
         super.onCreate()
-        NaverIdLoginSDK.initialize(this,
-            resources.getString(R.string.n_c_id),
-            resources.getString(R.string.n_c_secret),
-            resources.getString(R.string.app_name))
+//        NaverIdLoginSDK.initialize(this,
+//            resources.getString(R.string.n_c_id),
+//            resources.getString(R.string.n_c_secret),
+//            resources.getString(R.string.app_name))
 
         val localCacheSettings = PersistentCacheSettings
             .newBuilder()

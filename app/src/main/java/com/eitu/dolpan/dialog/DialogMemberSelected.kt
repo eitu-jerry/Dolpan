@@ -3,17 +3,14 @@ package com.eitu.dolpan.dialog
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.ColorFilter
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
-import com.eitu.dolpan.R
 import com.eitu.dolpan.databinding.DialogMemberSelectedBinding
 import com.eitu.dolpan.etc.ImageDownloader
 import com.eitu.dolpan.etc.IntentHelper
 import com.eitu.dolpan.livedata.MemberSelected
-import com.eitu.dolpan.view.activity.ChatActivity
 import com.eitu.dolpan.view.activity.ChatActivity_
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog

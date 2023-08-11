@@ -21,12 +21,11 @@ import com.google.firebase.ktx.Firebase
 class Youtube(activity: Activity) {
 
     private val activity: Activity
-    private val sp: SharedPreferences
+    private lateinit var sp: SharedPreferences
     private val fdb: FirebaseFirestore
 
     init {
         this.activity = activity
-        sp = (activity as BaseViewInterface).sp
         fdb = (activity as BaseViewInterface).fdb
     }
 

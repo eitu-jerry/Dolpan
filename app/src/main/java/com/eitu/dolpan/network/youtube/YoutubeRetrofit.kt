@@ -3,6 +3,7 @@ package com.eitu.dolpan.network.youtube
 import android.app.Activity
 import android.content.SharedPreferences
 import com.eitu.dolpan.R
+import com.eitu.dolpan.network.api.YoutubeAPI
 import retrofit2.Retrofit
 import okhttp3.OkHttpClient
 import retrofit2.converter.gson.GsonConverterFactory
@@ -16,7 +17,7 @@ class YoutubeRetrofit(activity: Activity) {
     private val baseUrl = "https://www.googleapis.com/youtube/v3/"
 
     private val activity: Activity
-    private val sp: SharedPreferences
+    private lateinit var sp: SharedPreferences
     private val fdb: FirebaseFirestore
     private var client: OkHttpClient
     private val youtube = Youtube(activity)
@@ -25,7 +26,7 @@ class YoutubeRetrofit(activity: Activity) {
 
     init {
         this.activity = activity
-        this.sp = (activity as BaseViewInterface).sp
+        //this.sp = (activity as BaseViewInterface).sp
         this.fdb = (activity as BaseViewInterface).fdb
         client = OkHttpClient.Builder()
             .connectTimeout(1, TimeUnit.MINUTES)

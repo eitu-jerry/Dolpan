@@ -1,7 +1,6 @@
-package com.eitu.dolpan.network.twitch
+package com.eitu.dolpan.network.api
 
 import com.eitu.dolpan.dataClass.twitchChat.TwitchChatItem
-import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import retrofit2.Call
 import retrofit2.http.*
@@ -28,5 +27,24 @@ interface TwitchAPI {
     @Headers("Client-ID: ${ID.chat_client_id}")
     @POST("gql")
     fun getChat(@Body payload: List<JsonObject>): Call<Array<TwitchChatItem>>
+
+}
+
+interface YoutubeAPI {
+
+    object ApiKey{
+        const val apiKey = "AIzaSyDAQTrSTT4rwytrm4yOIqVMtshfJhC56uo"
+    }
+
+    @GET("playlistItems?" +
+            "part=id,snippet,contentDetails&" +
+            "key=${ApiKey.apiKey}")
+    fun getPlaylist(@Query("playlistId") playlistId: String): Call<String>
+
+    @GET("channels?" +
+            "part=id,snippet,brandingSettings&" +
+            "maxResults=10&" +
+            "key=${ApiKey.apiKey}")
+    fun getChannels(@Query("id") id: String): Call<String>
 
 }
