@@ -20,13 +20,8 @@ class MemberSelected: ViewModel() {
     val member: LiveData<YoutubeMember>
         get() = _member
 
-    init {
-        //_member.value = YoutubeMember()
-    }
-
     fun updateValue(member: YoutubeMember?) {
         member?.let { _member.value = it }
-
     }
 
 }

@@ -22,4 +22,7 @@ abstract class BaseAdapter<E, I: RecyclerView.ViewHolder>: RecyclerView.Adapter<
         return list
     }
 
+    override fun getItemCount(): Int {
+        return list.size
+    }
 }

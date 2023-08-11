@@ -1,15 +1,11 @@
 package com.eitu.dolpan.view.base
 
-import android.app.Activity
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.eitu.dolpan.network.twitch.TwitchRetrofit
-import com.eitu.dolpan.network.youtube.YoutubeRetrofit
 
 abstract class BaseFragment: Fragment(), BaseViewInterface {
 

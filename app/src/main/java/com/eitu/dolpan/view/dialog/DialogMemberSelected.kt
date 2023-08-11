@@ -1,15 +1,10 @@
 package com.eitu.dolpan.view.dialog
 
-import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.view.ViewGroup
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStoreOwner
 import com.bumptech.glide.Glide
 import com.eitu.dolpan.databinding.DialogMemberSelectedBinding
-import com.eitu.dolpan.etc.ImageDownloader
 import com.eitu.dolpan.etc.IntentHelper
 import com.eitu.dolpan.livedata.MemberSelected
 import com.eitu.dolpan.view.activity.ChatActivity
@@ -22,11 +17,11 @@ class DialogMemberSelected(
     memberSelected: MemberSelected
     ) {
 
-    val bottomSheetDialog : BottomSheetDialog by lazy {
+    private val bottomSheetDialog : BottomSheetDialog by lazy {
         BottomSheetDialog(activity)
     }
 
-    val binding : DialogMemberSelectedBinding by lazy {
+    private val binding : DialogMemberSelectedBinding by lazy {
         DialogMemberSelectedBinding.inflate(activity.layoutInflater)
     }
 

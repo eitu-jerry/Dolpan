@@ -22,7 +22,7 @@ class YoutubeMemberModel: ViewModel() {
         refreshMembers()
     }
 
-    fun refreshMembers() {
+    private fun refreshMembers() {
         viewModelScope.launch {
             val result = withContext(Dispatchers.IO) {
                 fdb.collection("youtubeMember").get().await()

@@ -1,9 +1,5 @@
 package com.eitu.dolpan.view.base
 
-import android.app.Activity
-import android.content.SharedPreferences
-import com.eitu.dolpan.network.twitch.TwitchRetrofit
-import com.eitu.dolpan.network.youtube.YoutubeRetrofit
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase

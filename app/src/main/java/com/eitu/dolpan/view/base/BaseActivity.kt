@@ -1,19 +1,13 @@
 package com.eitu.dolpan.view.base
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Context
-import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.eitu.dolpan.etc.IntentHelper
-import com.eitu.dolpan.network.twitch.TwitchRetrofit
-import com.eitu.dolpan.network.youtube.YoutubeRetrofit
 
 abstract class BaseActivity : AppCompatActivity(), BaseViewInterface {
 

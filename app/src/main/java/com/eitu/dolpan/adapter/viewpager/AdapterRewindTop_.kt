@@ -4,11 +4,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.eitu.dolpan.adapter.BaseAdapter
-import com.eitu.dolpan.dataClass.YoutubeChannel_
+import com.eitu.dolpan.dataClass.youtube.YoutubeChannel
 import com.eitu.dolpan.databinding.ItemViewpagerRewindTopBinding
 import com.eitu.dolpan.etc.ImageDownloader
 
-class AdapterRewindTop_: BaseAdapter<YoutubeChannel_, AdapterRewindTop_.Holder>() {
+class AdapterRewindTop_: BaseAdapter<YoutubeChannel, AdapterRewindTop_.Holder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val binding = ItemViewpagerRewindTopBinding.inflate(LayoutInflater.from(parent.context))
@@ -20,8 +20,6 @@ class AdapterRewindTop_: BaseAdapter<YoutubeChannel_, AdapterRewindTop_.Holder>(
             val binding = holder.binding
             val item = list.get(position % list.size)
             val context = holder.itemView.context
-
-            if (item.bannerImage != null) ImageDownloader.setBanner(context, binding.banner, item.bannerImage)
 
         }
     }
