@@ -24,8 +24,9 @@ class MemberSelected: ViewModel() {
         //_member.value = YoutubeMember()
     }
 
-    fun updateValue(list: YoutubeMember) {
-        _member.value = list
+    fun updateValue(member: YoutubeMember?) {
+        member?.let { _member.value = it }
+
     }
 
 }

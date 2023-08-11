@@ -6,10 +6,9 @@ import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.eitu.dolpan.adapter.recycler.AdapterYtPl
 import com.eitu.dolpan.dataClass.YoutubePlaylist
-import com.eitu.dolpan.dataClass.YoutubeChannel
+import com.eitu.dolpan.dataClass.YoutubeChannel_
 import com.eitu.dolpan.databinding.DialogYtPlCheckBinding
-import com.eitu.dolpan.dialog.DolpanDialog
-import com.eitu.dolpan.livedata.YoutubeMemberLiveData
+import com.eitu.dolpan.view.dialog.DolpanDialog
 import retrofit2.Call
 import retrofit2.Response
 import com.eitu.dolpan.network.ResponseController
@@ -82,9 +81,9 @@ class Youtube(activity: Activity) {
         call.enqueue(object : ResponseController<String>("getChannels", object : OnResponseListener<String> {
             override fun onSuccess(response: Response<String>) {
                 Log.d("getChannels", response.body().toString())
-                val list = YoutubeChannel.toList(response.body())
+                val list = YoutubeChannel_.toList(response.body())
 
-                val hashList = YoutubeChannel.toHashList(list, activity)
+                val hashList = YoutubeChannel_.toHashList(list, activity)
                 for (i in hashList.indices) {
                     val item = hashList[i]
                     val docId = String.format("channel%02d", i)
@@ -100,7 +99,7 @@ class Youtube(activity: Activity) {
                         }
                 }
 
-                YoutubeMemberLiveData.reset(activity)
+//                YoutubeMemberModel.reset(activity)
             }
 
             override fun onFail(response: Response<String>) {

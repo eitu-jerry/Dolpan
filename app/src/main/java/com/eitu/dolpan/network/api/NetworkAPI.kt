@@ -4,6 +4,7 @@ import com.eitu.dolpan.dataClass.TwitchChatPayload
 import com.eitu.dolpan.dataClass.TwitchLive
 import com.eitu.dolpan.dataClass.TwitchToken
 import com.eitu.dolpan.dataClass.twitchChat.TwitchChatItem
+import com.eitu.dolpan.dataClass.youtube.YoutubeChannels
 import com.google.gson.JsonObject
 import retrofit2.Call
 import retrofit2.Response
@@ -36,10 +37,6 @@ interface TwitchCheckLiveAPI {
 
 interface TwitchGetChatAPI {
 
-//    @Headers({
-//        "Client-ID: ${CHAT_CLIENT_ID}",
-//        "Authorization : ${CHAT_AUTHORIZATION}"
-//    })
     @POST("gql")
     suspend fun getChat(
         @Header("Client-ID") clientId : String = CHAT_CLIENT_ID,
@@ -54,12 +51,12 @@ interface YoutubeAPI_ {
     @GET("playlistItems?" +
             "part=id,snippet,contentDetails&" +
             "key=${YOUTUBE_API_KEY}")
-    fun getPlaylist(@Query("playlistId") playlistId: String): Call<String>
+    suspend fun getPlaylist(@Query("playlistId") playlistId: String): Call<String>
 
     @GET("channels?" +
             "part=id,snippet,brandingSettings&" +
             "maxResults=10&" +
             "key=${YOUTUBE_API_KEY}")
-    fun getChannels(@Query("id") id: String): Call<String>
+    suspend fun getChannels(@Query("id") id: String): Response<YoutubeChannels>
 
 }

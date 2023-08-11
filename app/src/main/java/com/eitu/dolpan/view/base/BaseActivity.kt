@@ -9,7 +9,9 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import com.eitu.dolpan.etc.IntentHelper
 import com.eitu.dolpan.network.twitch.TwitchRetrofit
 import com.eitu.dolpan.network.youtube.YoutubeRetrofit
 
@@ -27,6 +29,18 @@ abstract class BaseActivity : AppCompatActivity(), BaseViewInterface {
             init()
         }
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        onBackPressedDispatcher.addCallback(OnBackPressed())
+    }
+
+    private inner class OnBackPressed : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            callWhenBack()
+        }
+    }
+
+    open fun callWhenBack() {
+        finish()
+        IntentHelper.outDetailAnim(this)
     }
 
     override fun onStart() {

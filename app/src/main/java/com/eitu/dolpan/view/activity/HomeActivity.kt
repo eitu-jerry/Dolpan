@@ -17,6 +17,7 @@ import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.eitu.dolpan.R
@@ -26,14 +27,16 @@ import com.eitu.dolpan.databinding.DialogYtPlAlreadyBinding
 import com.eitu.dolpan.databinding.DialogYtPlBinding
 import com.eitu.dolpan.databinding.NotiYtPlClipboadBinding
 import com.eitu.dolpan.databinding.TabHomeactBinding
-import com.eitu.dolpan.dialog.DialogMemberSelected
-import com.eitu.dolpan.dialog.DolpanDialog
+import com.eitu.dolpan.view.dialog.DialogMemberSelected
+import com.eitu.dolpan.view.dialog.DolpanDialog
+import com.eitu.dolpan.livedata.MemberSelected
 import com.eitu.dolpan.view.base.BaseActivity
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -44,50 +47,34 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
+@AndroidEntryPoint
 class HomeActivity : BaseActivity() {
 
     private lateinit var binding : ActivityHomeBinding
 
-    private lateinit var clipboard: ClipboardManager
     private var checkClipboard = true
     private val calledClip = ArrayList<String>()
+    private val clipboard: ClipboardManager by lazy {
+        getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    }
 
     private val adapterFragment by lazy {
         AdapterFragment(this)
     }
 
+    private val memberSelected : MemberSelected by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        DialogMemberSelected(this)
-        clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        DialogMemberSelected(this, memberSelected)
     }
 
-    override fun setBinding(): View? {
+    override fun setBinding(): View {
         binding = ActivityHomeBinding.inflate(layoutInflater)
         return binding.root
     }
 
     override fun init() {
-        binding.btnTest.setOnClickListener {
-            val _binding = DialogYtPlBinding.inflate(layoutInflater)
-
-            DolpanDialog(this)
-                .viewBinding(_binding)
-                .buttons(_binding.positive, null, object : DolpanDialog.OnClickListener {
-                    override fun onPositive() {
-                        var playlistId = _binding.playlistId.text.toString()
-                        playlistId = playlistId.substring(playlistId.indexOf("=") + 1)
-                        Toast.makeText(applicationContext, playlistId, Toast.LENGTH_SHORT).show()
-//                        checkYtPlIsExist(playlistId)
-                    }
-
-                    override fun onNegative() {
-
-                    }
-                })
-                .show()
-        }
-
         initFragment()
     }
 

@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
@@ -31,11 +32,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.eitu.dolpan.R
 import com.eitu.dolpan.dataClass.FireStoreItem
 import com.eitu.dolpan.dataClass.YoutubeMember
 import com.eitu.dolpan.etc.IntentHelper
 import com.eitu.dolpan.livedata.ChatItem
+import com.eitu.dolpan.view.base.BaseActivity
 import com.eitu.dolpan.view.compose.ImageFromUrl
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.firestore
@@ -44,37 +48,33 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ChatActivity_: ComponentActivity() {
+class ChatActivity: BaseActivity() {
 
-    private val owner:String
-        get() = intent.getStringExtra("owner")!!
+    private val owner : String by lazy {
+        intent.getStringExtra("owner") ?: ""
+    }
+    private val name : String by lazy {
+        intent.getStringExtra("name") ?: ""
+    }
+    private val profileImage : String by lazy {
+        intent.getStringExtra("profileImage") ?: ""
+    }
 
-    private var member: YoutubeMember? = null
-    private var memberName: MutableState<String?> = mutableStateOf(null)
-    private var profileImage: String? = null
     private val profileState: MutableState<Bitmap?> = mutableStateOf(null)
     private lateinit var viewModel: ChatItem;
 
+    override fun setBinding(): View? {
+        return null
+    }
+
+    override fun init() {
+
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        onBackPressedDispatcher.addCallback(onBackPressed)
         viewModel = ViewModelProvider(this)[ChatItem::class.java]
         init(chatItem = viewModel)
-        Firebase.firestore.collection("youtubeMember")
-            .document(owner)
-            .get()
-            .addOnSuccessListener {
-                member = it.toObject(YoutubeMember::class.java)
-                memberName.value = member?.name
-                profileImage = member?.profileImage
-                Log.d("profileImage", profileImage.toString())
-                if (profileImage != null) {
-                    ImageFromUrl.loadImageBitmapFromUrl(profileImage!!) {
-                        profileState.value = it
-                    }
-                }
-
-            }
         setContent {
             AppChat()
         }
@@ -110,19 +110,17 @@ class ChatActivity_: ComponentActivity() {
                     .align(Alignment.CenterStart)
                     .clickable(indication = null, interactionSource = interactionSource, onClick = {
                         finish()
-                        IntentHelper.outDetailAnim(this@ChatActivity_)
+                        IntentHelper.outDetailAnim(this@ChatActivity)
                     })
 
             )
-            memberName.value?.let {
-                Text(
-                    text = it.split(" ")[0],
-                    textAlign = TextAlign.Center,
-                    fontFamily = FontFamily(Font(resId = R.font.korail_round_gothic_medium)),
-                    fontSize = 18.sp,
-                    modifier = Modifier.align(alignment = Alignment.Center)
-                )
-            }
+            Text(
+                text = name,
+                textAlign = TextAlign.Center,
+                fontFamily = FontFamily(Font(resId = R.font.korail_round_gothic_medium)),
+                fontSize = 18.sp,
+                modifier = Modifier.align(alignment = Alignment.Center)
+            )
             Image(
                 painter = painterResource(id = R.drawable.img_rewind),
                 contentDescription = "backButton",
@@ -165,6 +163,7 @@ class ChatActivity_: ComponentActivity() {
 
     private val fromFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
     private val toFormat = SimpleDateFormat("yyyy년 MM월 dd일 EEEEEE요일", Locale.getDefault())
+    @OptIn(ExperimentalGlideComposeApi::class)
     @Composable
     fun ChatShell(preItem: FireStoreItem?, item: FireStoreItem) {
 
@@ -201,18 +200,16 @@ class ChatActivity_: ComponentActivity() {
                 )
             }
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-                profileState.value?.asImageBitmap()?.let {
-                    Image(
-                        bitmap = it,
-                        contentDescription = "profileImage",
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(RoundedCornerShape(17.dp)),
-                    )
-                }
+                GlideImage(
+                    model = profileImage,
+                    contentDescription = "profileImage",
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(RoundedCornerShape(17.dp))
+                )
                 Row() {
                     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                        Text(text = "${member?.name}", fontSize = 13.sp)
+                        Text(text = name, fontSize = 13.sp)
                         ChatText(item)
                         if (item.type == "naverCafe") {
                             Row(
@@ -319,11 +316,4 @@ class ChatActivity_: ComponentActivity() {
 
     }
 
-    private val onBackPressed = object: OnBackPressedCallback(true) {
-        override fun handleOnBackPressed() {
-            finish()
-            IntentHelper.outDetailAnim(this@ChatActivity_)
-        }
-
-    }
 }

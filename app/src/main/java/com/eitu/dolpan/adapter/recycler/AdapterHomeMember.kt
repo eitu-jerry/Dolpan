@@ -8,11 +8,13 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.eitu.dolpan.R
 import com.eitu.dolpan.adapter.BaseAdapter
 import com.eitu.dolpan.dataClass.YoutubeMember
@@ -20,27 +22,31 @@ import com.eitu.dolpan.databinding.ItemRecyclerMemberAllBinding
 import com.eitu.dolpan.databinding.ItemViewpagerRewindTopBinding
 import com.eitu.dolpan.etc.ImageDownloader
 import com.eitu.dolpan.livedata.MemberSelected
+import com.eitu.dolpan.livedata.YoutubeMemberModel
+import com.eitu.dolpan.view.base.BaseActivity
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
-class AdapterHomeMember(activity: Activity): BaseAdapter<YoutubeMember, AdapterHomeMember.Holder>() {
-
-    private val activity: Activity
-    private val member: MemberSelected
+class AdapterHomeMember(
+    val activity: BaseActivity,
+    val memberSelected: MemberSelected,
+    ytMembers : YoutubeMemberModel
+) : BaseAdapter<YoutubeMember, AdapterHomeMember.Holder>() {
 
     init {
-        this.activity = activity
-        this.member = ViewModelProvider(activity as ViewModelStoreOwner)[MemberSelected::class.java]
-        addSnapshot(id = "wak")
-        addSnapshot(id = "ine")
-        addSnapshot(id = "jing")
-        addSnapshot(id = "lilpa")
-        addSnapshot(id = "jururu")
-        addSnapshot(id = "gosegu")
-        addSnapshot(id = "vichan")
+        ytMembers.members.observe(activity ) {
+            setList(it)
+        }
+        addSnapshot(id = "wak", 0)
+        addSnapshot(id = "ine", 1)
+        addSnapshot(id = "jing", 2)
+        addSnapshot(id = "lilpa", 3)
+        addSnapshot(id = "jururu", 4)
+        addSnapshot(id = "gosegu", 5)
+        addSnapshot(id = "vichan", 6)
     }
 
-    fun addSnapshot(id: String) {
+    fun addSnapshot(id: String, position: Int) {
         Firebase.firestore.collection("youtubeMember")
             .document(id)
             .addSnapshotListener { value, error ->
@@ -49,15 +55,9 @@ class AdapterHomeMember(activity: Activity): BaseAdapter<YoutubeMember, AdapterH
                     return@addSnapshotListener
                 }
 
-                if (value != null && value.exists()) {
+                if (value != null && value.exists() && list.size > 0) {
                     Log.d("Snapshot", "owner=$id isLive=${value.get("isLive")}")
-                    var position = 0
-                    for (i in 0 until list.size) {
-                        if (list[i].owner == id) {
-                            position = i
-                            list[position] = value.toObject(YoutubeMember::class.java)!!
-                        }
-                    }
+                    list[position] = value.toObject(YoutubeMember::class.java)!!
                     notifyItemChanged(position)
                 }
             }
@@ -69,65 +69,77 @@ class AdapterHomeMember(activity: Activity): BaseAdapter<YoutubeMember, AdapterH
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
-        val binding = holder.binding
-        val item = list[position]
-        val context = holder.itemView.context
-
-        Log.d("item", "id=${item.owner} isLive=${item.isLive}")
-
-        val profileImage = item.profileImage
-        if (profileImage != null) ImageDownloader.setImage(context, binding.profile, profileImage)
-
-        binding.name.text = item.name
-
-        val description = item.description
-        if (description != null && description != "") {
-            binding.desc.visibility = View.VISIBLE
-            binding.desc.text = description
-        }
-        else {
-            binding.desc.visibility = View.GONE
-        }
-
-        val param = binding.layoutInfo.layoutParams as ConstraintLayout.LayoutParams
-        val margin = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10f, context.resources.displayMetrics)
-        if (item.isLive) {
-            if (binding.isLive.visibility == View.INVISIBLE) {
-                param.rightMargin = margin.toInt()
-                binding.isLive.visibility = View.VISIBLE
-                binding.isLive.startAnimation(AnimationUtils.loadAnimation(context, R.anim.anim_show_is_live))
-            }
-        }
-        else {
-            if (binding.isLive.visibility == View.VISIBLE) {
-                param.rightMargin = 0
-                binding.isLive.visibility = View.INVISIBLE
-                binding.isLive.startAnimation(AnimationUtils.loadAnimation(context, R.anim.anim_hide_is_live))
-            }
-        }
+        holder.setView()
     }
 
     override fun getItemCount(): Int {
         return list.size
     }
 
-    inner class Holder(binding: ItemRecyclerMemberAllBinding): RecyclerView.ViewHolder(binding.root) {
-
-        val binding: ItemRecyclerMemberAllBinding
+    inner class Holder(val binding: ItemRecyclerMemberAllBinding): RecyclerView.ViewHolder(binding.root) {
 
         init {
-            this.binding = binding
             binding.profile.clipToOutline = true
-            binding.root.layoutParams = RecyclerView.LayoutParams(
-                RecyclerView.LayoutParams.MATCH_PARENT,
-                RecyclerView.LayoutParams.WRAP_CONTENT)
-            binding.root.setOnClickListener {
-                member.updateValue(getList()[adapterPosition])
+            binding.isLive.visibility = View.GONE
+
+            binding.root.apply {
+                layoutParams = RecyclerView.LayoutParams(
+                    RecyclerView.LayoutParams.MATCH_PARENT,
+                    RecyclerView.LayoutParams.WRAP_CONTENT)
+
+                setOnClickListener {
+                    memberSelected.updateValue(getMember())
+                }
             }
+
             binding.isLive.setOnClickListener {
-                val intent = Intent(Intent.ACTION_VIEW)
-                intent.data = Uri.parse("twitch://open?stream=${list.get(adapterPosition).twitch}")
-                activity.startActivity(intent)
+                getMember()?.twitch?.let {
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    try {
+                        intent.data = Uri.parse("twitch://open?stream=$it")
+                        activity.startActivity(intent)
+                    } catch (e : Exception) {
+                        intent.data = Uri.parse("https://twitch.tv/$it")
+                        activity.startActivity(intent)
+                    }
+                }
+            }
+        }
+
+        fun setView() {
+            val item = getMember()
+            binding.member = item
+
+            item?.profileImage?.let {
+                Glide.with(binding.root).load(it).into(binding.profile)
+            }
+
+            item?.isLive?.let { binding.isLive.startAnimation(getAnimation(it)) }
+        }
+
+        private fun getAnimation(isLive : Boolean) : Animation {
+            return if (isLive && binding.isLive.visibility == View.GONE) {
+                AnimationUtils.loadAnimation(activity, R.anim.anim_show_is_live)
+            }
+            else if (!isLive && binding.isLive.visibility == View.VISIBLE){
+                AnimationUtils.loadAnimation(activity, R.anim.anim_hide_is_live)
+            }
+            else {
+                AnimationUtils.loadAnimation(activity, R.anim.anim_null)
+            }
+        }
+
+        private fun getMember() : YoutubeMember? {
+            return when(adapterPosition) {
+                0 -> list.find { it.owner == "wak" }
+                1 -> list.find { it.owner == "ine" }
+                2 -> list.find { it.owner == "jing" }
+                3 -> list.find { it.owner == "lilpa" }
+                4 -> list.find { it.owner == "jururu" }
+                5 -> list.find { it.owner == "gosegu" }
+                6 -> list.find { it.owner == "vichan" }
+                7 -> list.find { it.owner == "wakta" }
+                else -> list[0]
             }
         }
 

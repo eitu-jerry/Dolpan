@@ -1,15 +1,23 @@
 package com.eitu.dolpan.view.fragment
 
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import com.eitu.dolpan.databinding.FragmentMyBinding
+import com.eitu.dolpan.network.repo.YoutubeRepo
 import com.eitu.dolpan.view.base.BaseFragment
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MyFragment: BaseFragment() {
 
     private lateinit var binding: FragmentMyBinding
+
+    @Inject lateinit var youtube : YoutubeRepo
 
     companion object {
         fun newInstance(): MyFragment {
@@ -23,7 +31,13 @@ class MyFragment: BaseFragment() {
     }
 
     override fun init() {
-
+        binding.updateMembers.setOnClickListener {
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO) {
+                    youtube.updateChannels()
+                }
+            }
+        }
     }
 
 }

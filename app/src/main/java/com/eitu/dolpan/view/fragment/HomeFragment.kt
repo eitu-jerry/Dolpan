@@ -1,41 +1,30 @@
 package com.eitu.dolpan.view.fragment
 
 import android.graphics.Rect
-import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStoreOwner
-import androidx.lifecycle.get
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.ItemAnimator
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.eitu.dolpan.R
 import com.eitu.dolpan.adapter.recycler.AdapterHomeMember
 import com.eitu.dolpan.databinding.FragmentHomeBinding
 import com.eitu.dolpan.livedata.MemberSelected
-import com.eitu.dolpan.livedata.YoutubeMemberLiveData
+import com.eitu.dolpan.livedata.YoutubeMemberModel
 import com.eitu.dolpan.view.base.BaseFragment
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.*
 
 class HomeFragment: BaseFragment() {
 
     private lateinit var binding: FragmentHomeBinding
 
-    private lateinit var members: YoutubeMemberLiveData
+    private val ytMember: YoutubeMemberModel by viewModels()
+    private val memberSelected : MemberSelected by activityViewModels()
 
     private val adapterAll: AdapterHomeMember by lazy {
-        AdapterHomeMember(requireActivity())
+        AdapterHomeMember(baseActivity, memberSelected, ytMember)
     }
 
     companion object {

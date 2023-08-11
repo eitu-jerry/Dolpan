@@ -1,36 +1,9 @@
 package com.eitu.dolpan.view.fragment
 
-import android.animation.ArgbEvaluator
-import android.animation.ValueAnimator
-import android.annotation.SuppressLint
-import android.graphics.Color
-import android.graphics.Rect
-import android.graphics.drawable.ColorDrawable
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
-import android.util.TypedValue
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStoreOwner
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.ItemDecoration
-import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
-import com.eitu.dolpan.R
-import com.eitu.dolpan.adapter.recycler.AdapterCustomUrl
-import com.eitu.dolpan.adapter.viewpager.AdapterRewindTop
-import com.eitu.dolpan.databinding.FragmentMyBinding
 import com.eitu.dolpan.databinding.FragmentRewindBinding
-import com.eitu.dolpan.livedata.YoutubeMemberLiveData
 import com.eitu.dolpan.view.base.BaseFragment
-import java.text.SimpleDateFormat
-import java.util.*
 
 class RewindFragment: BaseFragment() {
 

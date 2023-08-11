@@ -1,6 +1,8 @@
 package com.eitu.dolpan.network.hilt
 
 import android.content.Context
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,6 +23,9 @@ class NetworkModule {
     @Provides
     fun provideSharedPreference(@ApplicationContext context: Context)
     = context.getSharedPreferences("PRFS", Context.MODE_PRIVATE)
+
+    @Provides
+    fun provideFirebaseFirestore() = Firebase.firestore
 
     @Provides
     @TwitchUpdateTokenUrl
@@ -79,6 +84,16 @@ class NetworkModule {
 
     @Provides
     @Singleton
+    @YoutubeRetrofit
+    fun provideYoutubeRetrofit(@YoutubeUrl baseUrl : String, client: OkHttpClient)
+    = Retrofit.Builder()
+        .client(client)
+        .baseUrl(baseUrl)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    @Provides
+    @Singleton
     fun provideTwitchUpdateTokenAPI(@TwitchUpdateTokenRetrofit retrofit: Retrofit)
     = retrofit.create(com.eitu.dolpan.network.api.TwitchUpdateTokenAPI::class.java)
 
@@ -91,6 +106,11 @@ class NetworkModule {
     @Singleton
     fun provideTwitchGetChatAPI(@TwitchGetChatRetrofit retrofit: Retrofit)
             = retrofit.create(com.eitu.dolpan.network.api.TwitchGetChatAPI::class.java)
+
+    @Provides
+    @Singleton
+    fun provideYoutubeAPI(@YoutubeRetrofit retrofit: Retrofit)
+            = retrofit.create(com.eitu.dolpan.network.api.YoutubeAPI_::class.java)
 
 }
 

@@ -13,6 +13,10 @@ import com.eitu.dolpan.network.youtube.YoutubeRetrofit
 
 abstract class BaseFragment: Fragment(), BaseViewInterface {
 
+    val baseActivity : BaseActivity by lazy {
+        requireActivity() as BaseActivity
+    }
+
     override val TAG: String
         get() = javaClass.simpleName
 

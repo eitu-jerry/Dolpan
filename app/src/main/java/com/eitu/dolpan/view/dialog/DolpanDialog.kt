@@ -1,4 +1,4 @@
-package com.eitu.dolpan.dialog
+package com.eitu.dolpan.view.dialog
 
 import android.R
 import android.app.Activity

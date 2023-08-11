@@ -6,7 +6,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.getField
 import org.json.JSONObject
 
-data class YoutubeChannel(
+data class YoutubeChannel_(
         val id: String?,
         val title: String?,
         val description: String?,
@@ -57,14 +57,14 @@ data class YoutubeChannel(
     }
 
     companion object {
-        fun toList(body: String?): List<YoutubeChannel> {
-            val list = ArrayList<YoutubeChannel>()
+        fun toList(body: String?): List<YoutubeChannel_> {
+            val list = ArrayList<YoutubeChannel_>()
 
             if (body != null) {
                 try {
                     val items = JSONObject(body).getJSONArray("items")
                     for (i in 0 until items.length()) {
-                        list.add(YoutubeChannel(items.getJSONObject(i)))
+                        list.add(YoutubeChannel_(items.getJSONObject(i)))
                     }
                 } catch (e: java.lang.Exception) {
                     e.printStackTrace()
@@ -74,17 +74,17 @@ data class YoutubeChannel(
             return list
         }
 
-        fun toList(fromDB: List<DocumentSnapshot>): List<YoutubeChannel> {
-            val list = ArrayList<YoutubeChannel>()
+        fun toList(fromDB: List<DocumentSnapshot>): List<YoutubeChannel_> {
+            val list = ArrayList<YoutubeChannel_>()
 
             for (item in fromDB) {
-                list.add(YoutubeChannel(item))
+                list.add(YoutubeChannel_(item))
             }
 
             return list
         }
 
-        fun toHashList(list: List<YoutubeChannel>, activity: Activity): List<HashMap<String, Any?>> {
+        fun toHashList(list: List<YoutubeChannel_>, activity: Activity): List<HashMap<String, Any?>> {
             val channelMain = activity.resources.getStringArray(R.array.channel_main)
             val channelSub = activity.resources.getStringArray(R.array.channel_sub)
             val channelReplay = activity.resources.getStringArray(R.array.channel_replay)
