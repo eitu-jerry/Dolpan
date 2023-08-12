@@ -1,8 +1,10 @@
 package com.eitu.dolpan.viewModel.memberChat
 
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.eitu.dolpan.dataClass.firestore.Chat
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.tasks.await
@@ -13,23 +15,36 @@ class ChatPagingSource (
     private val owner : String
 ) : PagingSource<Int, Chat>() {
 
+    private var lastDoc : DocumentSnapshot? = null
+    private var limit : Long? = null
+
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Chat> {
         try {
             val nextPageNumber = params.key ?: 0
 
+            Log.d("nextPageNumber", "$nextPageNumber")
+
             val chatList = ArrayList<Chat>()
 
+            var query = fdb.collection("item")
+                .whereEqualTo("owner", owner)
+                .orderBy("date", Query.Direction.ASCENDING)
+
+            limit?.let { query = query.limit(it) }
+            lastDoc?.let { query = query.startAfter(it) }
+
             try {
-                val result = fdb.collection("item")
-                    .whereEqualTo("owner", owner)
-                    .orderBy("date", Query.Direction.ASCENDING)
-                    .get()
-                    .await()
+                val result = query.get().await()
+                val documents = result.documents
 
-                result.documents.forEach {
-                    it.toObject(Chat::class.java)?.let { chat -> chatList.add(chat) }
+                if (limit == null) limit = 15L
+
+                if (documents.isNotEmpty()) {
+                    lastDoc = result.documents.last()
+                    documents.forEach {
+                        it.toObject(Chat::class.java)?.let { chat -> chatList.add(chat) }
+                    }
                 }
-
             } catch (e: Exception) {
                 e.printStackTrace()
             }

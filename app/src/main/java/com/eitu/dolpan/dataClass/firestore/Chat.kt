@@ -3,6 +3,8 @@ package com.eitu.dolpan.dataClass.firestore
 import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.PropertyName
+import java.text.SimpleDateFormat
+import java.util.*
 
 data class Chat(
     @PropertyName("owner")
@@ -17,18 +19,29 @@ data class Chat(
     val date: String = "",
 ) {
 
-    companion object {
+    private val fromFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+    private val toFormat = SimpleDateFormat("yyyy년 MM월 dd일 EEEEEE요일", Locale.getDefault())
 
-        fun toList(items: List<DocumentSnapshot>): ArrayList<Chat> {
-            val list = ArrayList<Chat>()
-            for (item in items) {
-                item.toObject(Chat::class.java)?.let {
-                    list.add(it)
-                    Log.d("item", it.title)
-                }
+    fun getFormattedTime() : String {
+        var timeText : String
+
+        try {
+            timeText = date.split(" ")[1]
+            val hour = timeText.split(":")[0].toInt()
+            val minute = timeText.split(":")[1]
+            if (hour > 12) {
+                timeText = "오후 ${hour-12}:$minute"
             }
-            return list
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+            timeText = ""
         }
+
+        return timeText
+    }
+
+    fun getFormattedDate() : String? {
+        return fromFormat.parse(date)?.let { toFormat.format(it) }
     }
 
 }
