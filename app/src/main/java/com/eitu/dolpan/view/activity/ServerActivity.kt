@@ -17,18 +17,6 @@ class ServerActivity: BaseActivity() {
     private val jururuCafe = "ri0vjEn1-XpglkwfwSDuBw"
     private val goseguCafe = "kvYmWvSHP9_wnnbRX4nGXg"
     private val vichanCafe = "6Wj7By3k4NnbeXohIaIltQ"
-    private val memberArray = arrayOf(wakCafe, ineCafe, jingCafe, lilpaCafe, jururuCafe, goseguCafe, vichanCafe)
-    private var memberIndex = 0
-    private var currentMember: String = ""
-    private val memberMap = hashMapOf(
-        Pair(wakCafe, "wak"),
-        Pair(ineCafe, "ine"),
-        Pair(jingCafe, "jing"),
-        Pair(lilpaCafe, "lilpa"),
-        Pair(jururuCafe, "jururu"),
-        Pair(goseguCafe, "gosegu"),
-        Pair(vichanCafe, "vichan"),
-    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

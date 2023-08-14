@@ -18,6 +18,8 @@ class TwitchRepo @Inject constructor(
     private val getChatAPI: TwitchGetChatAPI
 ) {
 
+    private val members = arrayOf("woowakgood", "vo_ine", "jingburger", "lilpaaaaaa", "cotton__123", "gosegugosegu", "viichan6")
+
     suspend fun updateToken() {
         try {
             val result = returnResult(updateTokenAPI.getAccessToken())

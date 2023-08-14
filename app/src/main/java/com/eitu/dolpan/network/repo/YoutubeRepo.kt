@@ -5,7 +5,7 @@ import com.eitu.dolpan.R
 import com.eitu.dolpan.dataClass.firestore.YoutubeMember
 import com.eitu.dolpan.dataClass.youtube.YoutubeChannel
 import com.eitu.dolpan.network.DolpanResult
-import com.eitu.dolpan.network.api.YoutubeAPI_
+import com.eitu.dolpan.network.api.YoutubeAPI
 import com.eitu.dolpan.network.returnResult
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -16,7 +16,7 @@ import javax.inject.Inject
 class YoutubeRepo @Inject constructor(
     @ApplicationContext
     val context : Context,
-    val api : YoutubeAPI_,
+    val api : YoutubeAPI,
     val fdb : FirebaseFirestore
     ) {
 

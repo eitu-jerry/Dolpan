@@ -53,6 +53,8 @@ abstract class BaseFragment: Fragment(), BaseViewInterface {
     }
 
     abstract fun setBinding(inflater: LayoutInflater) : View
-    abstract fun init()
+    open fun init() {
+
+    }
 
 }

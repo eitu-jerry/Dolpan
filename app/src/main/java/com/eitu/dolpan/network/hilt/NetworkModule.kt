@@ -3,7 +3,6 @@ package com.eitu.dolpan.network.hilt
 import android.content.Context
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -11,7 +10,6 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 import java.util.concurrent.TimeUnit
 import javax.inject.Qualifier
 import javax.inject.Singleton
@@ -42,6 +40,10 @@ class NetworkModule {
     @Provides
     @YoutubeUrl
     fun provideYoutubeUrl() = "https://www.googleapis.com/youtube/v3/"
+
+    @Provides
+    @NaverCafeUrl
+    fun provideNaverCafeUrl() = "https://apis.naver.com/"
 
     @Provides
     @Singleton
@@ -94,6 +96,16 @@ class NetworkModule {
 
     @Provides
     @Singleton
+    @NaverCafeRetrofit
+    fun provideNaverCafeRetrofit(@NaverCafeUrl baseUrl : String, client: OkHttpClient)
+    = Retrofit.Builder()
+        .client(client)
+        .baseUrl(baseUrl)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    @Provides
+    @Singleton
     fun provideTwitchUpdateTokenAPI(@TwitchUpdateTokenRetrofit retrofit: Retrofit)
     = retrofit.create(com.eitu.dolpan.network.api.TwitchUpdateTokenAPI::class.java)
 
@@ -110,7 +122,12 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideYoutubeAPI(@YoutubeRetrofit retrofit: Retrofit)
-            = retrofit.create(com.eitu.dolpan.network.api.YoutubeAPI_::class.java)
+            = retrofit.create(com.eitu.dolpan.network.api.YoutubeAPI::class.java)
+
+    @Provides
+    @Singleton
+    fun provideNaverCafeAPI(@NaverCafeRetrofit retrofit: Retrofit)
+            = retrofit.create(com.eitu.dolpan.network.api.NaverCafeAPI::class.java)
 
 }
 
@@ -132,6 +149,10 @@ annotation class YoutubeUrl
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
+annotation class NaverCafeUrl
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
 annotation class TwitchUpdateTokenRetrofit
 
 @Qualifier
@@ -145,3 +166,7 @@ annotation class TwitchGetChatRetrofit
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class YoutubeRetrofit
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class NaverCafeRetrofit
