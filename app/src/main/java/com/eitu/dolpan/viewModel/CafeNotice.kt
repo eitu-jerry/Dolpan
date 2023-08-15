@@ -3,7 +3,7 @@ package com.eitu.dolpan.viewModel
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.eitu.dolpan.dataClass.naver.cafe.Article
+import com.eitu.dolpan.dataClass.naver.menu.Article
 import com.eitu.dolpan.network.repo.NaverCafeRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

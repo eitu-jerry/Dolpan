@@ -16,13 +16,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.viewModels
-import com.eitu.dolpan.dataClass.naver.cafe.Article
+import com.eitu.dolpan.dataClass.naver.menu.Article
 import com.eitu.dolpan.view.base.BaseFragment
 import com.eitu.dolpan.viewModel.CafeNotice
 import dagger.hilt.android.AndroidEntryPoint

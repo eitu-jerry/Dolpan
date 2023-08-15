@@ -6,5 +6,5 @@ data class TwitchChatChannel(
     @SerializedName("id")
     val id: String,
     @SerializedName("recentChatMessages")
-    val recentChatMessages: Array<TwitchChatMessage?>
+    val recentChatMessages: Array<TwitchChatMessage>
 )

@@ -36,7 +36,6 @@ import com.eitu.dolpan.etc.IntentHelper
 import com.eitu.dolpan.viewModel.memberChat.MemberChat
 import com.eitu.dolpan.view.base.BaseActivity
 import com.google.firebase.firestore.*
-import kotlinx.coroutines.launch
 import java.util.*
 
 class ChatActivity: BaseActivity() {
@@ -129,21 +128,25 @@ class ChatActivity: BaseActivity() {
                 .fillMaxWidth()
                 .fillMaxHeight(),
             verticalArrangement = Arrangement.spacedBy(10.dp),
-            state = listState
+            state = listState,
+            reverseLayout = true
         ) {
-            coroutineScope.launch {
-                val size = chatList.itemCount
-                val limit = 13
-                if (size > limit && listState.firstVisibleItemIndex < limit - 1) {
-                    listState.scrollToItem(index = size - 1)
-                }
-            }
+//            coroutineScope.launch {
+//                val size = chatList.itemCount
+//                val limit = 13
+//                if (size > limit && listState.firstVisibleItemIndex < limit - 1) {
+//                    listState.scrollToItem(index = size - 1)
+//                }
+//            }
             itemsIndexed(items = chatList.itemSnapshotList) { i, item ->
-                var preItem: Chat? = null
-                if (i != 0) {
-                    preItem = chatList[i - 1]
+                item?.let {
+                    var nextItem: Chat? = null
+                    if (i < chatList.itemCount - 1) {
+                        nextItem = chatList.itemSnapshotList[i + 1]
+                    }
+
+                    ChatShell(nextItem = nextItem, item = it)
                 }
-                ChatShell(preItem = preItem, item = item!!)
             }
         }
     }
@@ -151,14 +154,13 @@ class ChatActivity: BaseActivity() {
 
     @OptIn(ExperimentalGlideComposeApi::class)
     @Composable
-    fun ChatShell(preItem: Chat?, item: Chat) {
-
-        val preFormatted = preItem?.getFormattedTime()
+    fun ChatShell(nextItem: Chat?, item: Chat) {
+        val preFormatted = nextItem?.getFormattedTime()
         val formatted = item.getFormattedTime()
 
         val showProfile = preFormatted != formatted
 
-        val preToday = preItem?.getFormattedDate()
+        val preToday = nextItem?.getFormattedDate()
         val today = item.getFormattedDate()
 
         val showToday = today != preToday
@@ -198,7 +200,7 @@ class ChatActivity: BaseActivity() {
                             Text(text = name, fontSize = 13.sp)
                         }
                         ChatText(item.title, formatted)
-                        if (item.type == "naverCafe") {
+                        if (item.type == "naverCafe" && item.id != null) {
                             NaverCafeLink(id = item.id)
                         }
                     }

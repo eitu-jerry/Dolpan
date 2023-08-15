@@ -1,6 +1,7 @@
 package com.eitu.dolpan.network.api
 
-import com.eitu.dolpan.dataClass.naver.cafe.NaverCafeResult
+import com.eitu.dolpan.dataClass.naver.member.NaverCafeMemberResult
+import com.eitu.dolpan.dataClass.naver.menu.NaverCafeMenuResult
 import com.eitu.dolpan.dataClass.twitch.chat.request.TwitchChatPayload
 import com.eitu.dolpan.dataClass.twitch.TwitchLive
 import com.eitu.dolpan.dataClass.twitch.TwitchToken
@@ -72,6 +73,16 @@ interface NaverCafeAPI {
         @Query("search.page")       page      : Int = 1,
         @Query("search.perPage")    offset    : Int = 50,
         @Query("search.menuid")     menuId    : String
-    ) : Response<NaverCafeResult>
+    ) : Response<NaverCafeMenuResult>
+
+    @GET("cafe-web/cafe-mobile/CafeMemberNetworkArticleList")
+    suspend fun getMemberArticles(
+        @Header("Cookie")           cookie      : String = COOKIE,
+        @Query("search.cafeId")     cafeId      : String = "27842958",
+        @Query("search.page")       page        : Int = 1,
+        @Query("search.perPage")    offset      : Int = 50,
+        @Query("requestFrom")       requestFrom : String = "A",
+        @Query("search.memberKey")  memberKey   : String
+    ) : Response<NaverCafeMemberResult>
 
 }

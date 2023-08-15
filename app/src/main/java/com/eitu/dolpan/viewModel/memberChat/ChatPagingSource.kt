@@ -1,74 +1,57 @@
 package com.eitu.dolpan.viewModel.memberChat
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.eitu.dolpan.dataClass.firestore.Chat
+import com.eitu.dolpan.viewModel.memberChat.ChatPagingSource.PagingKey
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.Source
 import kotlinx.coroutines.tasks.await
-import javax.inject.Inject
 
 class ChatPagingSource (
     private val fdb : FirebaseFirestore,
     private val owner : String
-) : PagingSource<Int, Chat>() {
+) : PagingSource<PagingKey, Chat>() {
 
-    private var lastDoc : DocumentSnapshot? = null
-    private var limit : Long? = null
-
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Chat> {
+    override suspend fun load(params: LoadParams<PagingKey>): LoadResult<PagingKey, Chat> {
         try {
-            val nextPageNumber = params.key ?: 0
-
-            Log.d("nextPageNumber", "$nextPageNumber")
-
-            val chatList = ArrayList<Chat>()
-
             var query = fdb.collection("item")
                 .whereEqualTo("owner", owner)
-                .orderBy("date", Query.Direction.ASCENDING)
+                .orderBy("date", Query.Direction.DESCENDING)
+                .limit(params.loadSize.toLong())
 
-            limit?.let { query = query.limit(it) }
-            lastDoc?.let { query = query.startAfter(it) }
+            val key = params.key
 
-            try {
-                val result = query.get().await()
-                val documents = result.documents
-
-                if (limit == null) limit = 15L
-
-                if (documents.isNotEmpty()) {
-                    lastDoc = result.documents.last()
-                    documents.forEach {
-                        it.toObject(Chat::class.java)?.let { chat -> chatList.add(chat) }
-                    }
+            query = when(key) {
+                is PagingKey.PrevKey -> {
+                    query.endBefore(key.endBefore)
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
+                is PagingKey.NextKey -> {
+                    query.startAfter(key.startAfter)
+                }
+                null -> query
             }
 
-            return if (chatList.isNotEmpty()) {
-                LoadResult.Page(
-                    data = chatList,
-                    prevKey = null,
-                    nextKey = nextPageNumber + 1
-                )
-            }
-            else {
-                LoadResult.Page(
-                    data = emptyList(),
-                    prevKey = null,
-                    nextKey = null
-                )
-            }
+            val result = query.get().await()
+            val documents = result.documents
+            val chatList = result.toObjects(Chat::class.java)
+
+            val firstDoc = documents.firstOrNull()
+            val lastDoc = documents.lastOrNull()
+
+            return LoadResult.Page(
+                data = chatList,
+                prevKey = if (firstDoc != null) PagingKey.PrevKey(firstDoc) else null,
+                nextKey = if (lastDoc != null) PagingKey.NextKey(lastDoc) else null
+            )
         } catch (e : Exception) {
             throw e
         }
     }
 
-    override fun getRefreshKey(state: PagingState<Int, Chat>): Int? {
+    override fun getRefreshKey(state: PagingState<PagingKey, Chat>): PagingKey? {
         // Try to find the page key of the closest page to anchorPosition, from
         // either the prevKey or the nextKey, but you need to handle nullability
         // here:
@@ -78,8 +61,14 @@ class ChatPagingSource (
         //    just return null.
         return state.anchorPosition?.let { anchorPosition ->
             val anchorPage = state.closestPageToPosition(anchorPosition)
-            anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)
+            //anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)
+            null
         }
+    }
+
+    sealed class PagingKey {
+        data class PrevKey(val endBefore : DocumentSnapshot) : PagingKey()
+        data class NextKey(val startAfter : DocumentSnapshot) : PagingKey()
     }
 
 }

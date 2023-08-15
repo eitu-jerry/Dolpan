@@ -11,12 +11,14 @@ data class Chat(
     val owner: String = "",
     @PropertyName("type")
     val type: String = "",
-    @PropertyName("id")
-    val id: String = "",
-    @PropertyName("title")
-    val title: String = "",
     @PropertyName("date")
     val date: String = "",
+    @PropertyName("title")
+    val title: String = "",
+    @PropertyName("id")
+    val id: String? = null,
+    @PropertyName("sendFrom")
+    val sendFrom: String? = null,
 ) {
 
     private val fromFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())

@@ -1,4 +1,4 @@
-package com.eitu.dolpan.dataClass.naver.cafe
+package com.eitu.dolpan.dataClass.naver.member
 
 
 import com.google.gson.annotations.SerializedName
