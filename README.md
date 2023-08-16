@@ -13,3 +13,4 @@
 - Jetpack Compose
 - Glide & Glide-Compose
 - Coroutine
+- Paging3
