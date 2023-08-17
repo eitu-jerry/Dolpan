@@ -17,13 +17,14 @@ class MemberChat: ViewModel() {
     private lateinit var owner : String
 
     val chatList : Flow<PagingData<Chat>> by lazy {
-        Pager(PagingConfig(pageSize = 10, prefetchDistance = 20, enablePlaceholders = false)) {
+        Pager(PagingConfig(pageSize = 10, prefetchDistance = 30, initialLoadSize = 100, enablePlaceholders = false)) {
             ChatPagingSource(Firebase.firestore, owner)
         }.flow.cachedIn(viewModelScope)
     }
 
     fun setOwner(owner : String) {
         this.owner = owner
+
     }
 
 }

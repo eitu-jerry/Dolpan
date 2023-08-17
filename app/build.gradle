@@ -156,6 +156,9 @@ dependencies {
     /**
      * Paging3 End
      */
+
+    //socket
+    implementation("io.socket:socket.io-client:2.1.0")
 }
 
 // Allow references to generated code
