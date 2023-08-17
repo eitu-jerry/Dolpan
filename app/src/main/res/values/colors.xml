@@ -15,6 +15,7 @@
     <color name="gray">#919191</color>
     <color name="darkGray">#616161</color>
     <color name="transBlack">#AAFFFFFF</color>
+    <color name="lightGray">#FFCCCCCC</color>
 
     <color name="wak">#008D62</color>
     <color name="ine">#8A2BE2</color>
@@ -23,6 +24,14 @@
     <color name="jururu">#800080</color>
     <color name="gosegu">#457EC5</color>
     <color name="vichan">#85AC1F</color>
+
+    <color name="wak_chat">#92CFBC</color>
+    <color name="ine_chat">#BF97E4</color>
+    <color name="jing_chat">#F0C38F</color>
+    <color name="lilpa_chat">#7676A9</color>
+    <color name="jururu_chat">#BE7FBE</color>
+    <color name="gosegu_chat">#83A7D4</color>
+    <color name="vichan_chat">#B2C77B</color>
 
     <array name="isdColorArr">
         <item>#8A2BE2</item>

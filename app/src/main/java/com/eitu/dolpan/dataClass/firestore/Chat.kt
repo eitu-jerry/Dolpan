@@ -1,6 +1,9 @@
 package com.eitu.dolpan.dataClass.firestore
 
 import android.util.Log
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
+import com.eitu.dolpan.R
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.PropertyName
 import java.text.SimpleDateFormat

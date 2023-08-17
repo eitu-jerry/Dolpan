@@ -20,11 +20,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -159,6 +161,7 @@ class ChatActivity: BaseActivity() {
         val formatted = item.getFormattedTime()
 
         val showProfile = preFormatted != formatted
+        val fromOwner = item.sendFrom == null
 
         val preToday = nextItem?.getFormattedDate()
         val today = item.getFormattedDate()
@@ -181,20 +184,20 @@ class ChatActivity: BaseActivity() {
                         .padding(top = 5.dp, start = 10.dp, end = 10.dp, bottom = 5.dp)
                 )
             }
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-                if (showProfile) {
-                    GlideImage(
-                        model = profileImage,
-                        contentDescription = "profileImage",
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(RoundedCornerShape(17.dp))
-                    )
-                }
-                else {
-                    Spacer(modifier = Modifier.width(40.dp))
-                }
-                Row() {
+            if (fromOwner) {
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+                    if (showProfile) {
+                        GlideImage(
+                            model = profileImage,
+                            contentDescription = "profileImage",
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(RoundedCornerShape(17.dp))
+                        )
+                    }
+                    else {
+                        Spacer(modifier = Modifier.width(40.dp))
+                    }
                     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                         if (showProfile) {
                             Text(text = name, fontSize = 13.sp)
@@ -206,28 +209,73 @@ class ChatActivity: BaseActivity() {
                     }
                 }
             }
+            else {
+                ChatText(title = item.title, time = formatted, sender = item.sendFrom)
+            }
         }
     }
 
     @Composable
-    fun ChatText(title : String, time : String) {
-        Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-            Box(modifier = Modifier
-                .wrapContentWidth()
-                .wrapContentHeight()
-                .widthIn(min = 30.dp, max = 220.dp)
-                .background(
-                    shape = RoundedCornerShape(12.dp),
-                    color = Color.LightGray
-                )
-                .padding(top = 5.dp, start = 10.dp, end = 10.dp, bottom = 5.dp)
-            ) {
-                Text(text = title, fontSize = 15.sp)
+    fun ChatText(title : String, time : String, sender : String? = null) {
+
+        val colorMap = hashMapOf(
+            Pair("wak", R.color.wak_chat),
+            Pair("ine", R.color.ine_chat),
+            Pair("jing", R.color.jing_chat),
+            Pair("lilpa", R.color.lilpa_chat),
+            Pair("jururu", R.color.jururu_chat),
+            Pair("gosegu", R.color.gosegu_chat),
+            Pair("vichan", R.color.vichan_chat)
+        )
+
+
+        fun getSenderColor(sender : String) : Int {
+            return colorMap[sender] ?: R.color.lightGray
+        }
+
+        if (sender == null) {
+            Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+                Box(modifier = Modifier
+                    .wrapContentWidth()
+                    .wrapContentHeight()
+                    .widthIn(min = 30.dp, max = 220.dp)
+                    .background(
+                        shape = RoundedCornerShape(12.dp),
+                        color = Color.LightGray
+                    )
+                    .padding(top = 5.dp, start = 10.dp, end = 10.dp, bottom = 5.dp)
+                ) {
+                    Text(text = title, fontSize = 15.sp)
+                }
+                Text(
+                    text = time,
+                    fontSize = 9.sp,
+                    modifier = Modifier.align(alignment = Alignment.Bottom))
             }
-            Text(
-                text = time,
-                fontSize = 9.sp,
-                modifier = Modifier.align(alignment = Alignment.Bottom))
+        }
+        else {
+            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                Row(horizontalArrangement = Arrangement.spacedBy(5.dp), modifier = Modifier.fillMaxWidth()) {
+                    Box(modifier = Modifier
+                        .wrapContentWidth()
+                        .wrapContentHeight()
+                        .widthIn(min = 30.dp, max = 220.dp)
+                        .background(
+                            shape = RoundedCornerShape(12.dp),
+                            color = colorResource(id = getSenderColor(sender))
+                        )
+                        .padding(top = 5.dp, start = 10.dp, end = 10.dp, bottom = 5.dp)
+                    ) {
+                        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                            Text(text = title, fontSize = 15.sp)
+                        }
+                    }
+                    Text(
+                        text = time,
+                        fontSize = 9.sp,
+                        modifier = Modifier.align(alignment = Alignment.Bottom))
+                }
+            }
         }
     }
 
