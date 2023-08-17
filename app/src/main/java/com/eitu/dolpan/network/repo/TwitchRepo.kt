@@ -7,9 +7,7 @@ import com.eitu.dolpan.dataClass.firestore.Chat
 import com.eitu.dolpan.dataClass.twitch.chat.request.TwitchChatPayload
 import com.eitu.dolpan.dataClass.twitch.chat.response.TwitchChatMessage
 import com.eitu.dolpan.network.DolpanResult
-import com.eitu.dolpan.network.api.TwitchCheckLiveAPI
-import com.eitu.dolpan.network.api.TwitchGetChatAPI
-import com.eitu.dolpan.network.api.TwitchUpdateTokenAPI
+import com.eitu.dolpan.network.api.*
 import com.eitu.dolpan.network.returnResult
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
@@ -28,24 +26,15 @@ class TwitchRepo @Inject constructor(
     private val getChatAPI: TwitchGetChatAPI
 ) {
 
-    /**
-     * woowakgood   49045679
-     * vo_ine       702754423
-     * jingburger   237570548
-     * lilpaaaaaa   169700336
-     * cotton__123  203667951
-     * gesegugosegu 707328484
-     * viichan6     195641865
-     */
-    private val members = arrayOf("49045679", "702754423", "237570548", "169700336", "203667951", "707328484", "195641865")
+
     private val memberMap = hashMapOf(
-        Pair("49045679", "wak"),
-        Pair("702754423", "ine"),
-        Pair("237570548", "jing"),
-        Pair("169700336", "lilpa"),
-        Pair("203667951", "jururu"),
-        Pair("707328484", "gosegu"),
-        Pair("195641865", "vichan")
+        Pair(woowakgood, "wak"),
+        Pair(vo_ine, "ine"),
+        Pair(jingburger, "jing"),
+        Pair(lilpaaaaaa, "lilpa"),
+        Pair(cotton__123, "jururu"),
+        Pair(gesegugosegu, "gosegu"),
+        Pair(viichan6, "vichan")
     )
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
 
@@ -106,7 +95,7 @@ class TwitchRepo @Inject constructor(
 
                     if (messages.isEmpty()) throw Exception("$channelId's message is empty")
 
-                    var filteredMessages = messages.filter { members.contains(it.sender.id) }
+                    var filteredMessages = messages.filter { memberMap.keys.contains(it.sender.id.toInt()) }
 
                     if (filteredMessages.isEmpty()) throw Exception("$channelId's message is empty")
 
@@ -117,15 +106,15 @@ class TwitchRepo @Inject constructor(
                     if (filteredMessages.isEmpty()) throw Exception("$channelId's new message is empty")
 
                     CoroutineScope(Dispatchers.IO).launch {
-                        filteredMessages.filter { members.contains(it.sender.id) }.forEach {
+                        filteredMessages.forEach {
                             val sender = it.sender.id
                             fdb.collection("item")
                                 .add(Chat(
-                                    owner = memberMap[channelOwner] ?: "",
+                                    owner = memberMap[channelOwner.toInt()] ?: "",
                                     type = "twitchChat",
                                     date = dateFormat.format(System.currentTimeMillis()),
                                     title = it.content.text,
-                                    sendFrom = if (sender == channelOwner) null else memberMap[sender]
+                                    sendFrom = if (sender == channelOwner) null else memberMap[sender.toInt()]
                                 ))
                                 .await()
                         }

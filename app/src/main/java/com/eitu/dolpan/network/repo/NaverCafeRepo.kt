@@ -4,10 +4,9 @@ import android.util.Log
 import com.eitu.dolpan.dataClass.firestore.Chat
 import com.eitu.dolpan.dataClass.naver.menu.Article
 import com.eitu.dolpan.network.DolpanResult
-import com.eitu.dolpan.network.api.NaverCafeAPI
+import com.eitu.dolpan.network.api.*
 import com.eitu.dolpan.network.returnResult
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.tasks.asDeferred
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -16,23 +15,14 @@ class NaverCafeRepo @Inject constructor(
     private val fdb : FirebaseFirestore
 ) {
 
-
-    private val wakCafe = "Iep9BEdfIxd759MU7JgtSg"
-    private val ineCafe = "Lp-S_8ZQuLCK03pDpod-7Q"
-    private val jingCafe = "8g_F8kj48MSqBeVnVAhnCw"
-    private val lilpaCafe = "ANjFuUREskKRC7DcGwAXNA"
-    private val jururuCafe = "ri0vjEn1-XpglkwfwSDuBw"
-    private val goseguCafe = "kvYmWvSHP9_wnnbRX4nGXg"
-    private val vichanCafe = "6Wj7By3k4NnbeXohIaIltQ"
-
     val memberMap = hashMapOf(
-        Pair("Iep9BEdfIxd759MU7JgtSg", "wak"),
-        Pair("Lp-S_8ZQuLCK03pDpod-7Q", "ine"),
-        Pair("8g_F8kj48MSqBeVnVAhnCw", "jing"),
-        Pair("ANjFuUREskKRC7DcGwAXNA", "lilpa"),
-        Pair("ri0vjEn1-XpglkwfwSDuBw", "jururu"),
-        Pair("kvYmWvSHP9_wnnbRX4nGXg", "gosegu"),
-        Pair("6Wj7By3k4NnbeXohIaIltQ", "vichan")
+        Pair(wakCafe, "wak"),
+        Pair(ineCafe, "ine"),
+        Pair(jingCafe, "jing"),
+        Pair(lilpaCafe, "lilpa"),
+        Pair(jururuCafe, "jururu"),
+        Pair(goseguCafe, "gosegu"),
+        Pair(vichanCafe, "vichan")
     )
 
     suspend fun getMenuArticles(menuId : String, offset : Int = 10) : List<Article> {
