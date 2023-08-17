@@ -5,7 +5,7 @@ import com.eitu.dolpan.R
 import com.eitu.dolpan.dataClass.firestore.YoutubeMember
 import com.eitu.dolpan.dataClass.youtube.YoutubeChannel
 import com.eitu.dolpan.network.DolpanResult
-import com.eitu.dolpan.network.api.YoutubeAPI
+import com.eitu.dolpan.network.api.*
 import com.eitu.dolpan.network.returnResult
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -20,18 +20,18 @@ class YoutubeRepo @Inject constructor(
     val fdb : FirebaseFirestore
     ) {
 
-    val wak = context.resources.getStringArray(R.array.wak)
-    val wakta = context.resources.getStringArray(R.array.wakta)
-    val ine = context.resources.getStringArray(R.array.ine)
-    val jing = context.resources.getStringArray(R.array.jing)
-    val lilpa = context.resources.getStringArray(R.array.lilpa)
-    val jururu = context.resources.getStringArray(R.array.jururu)
-    val gosegu = context.resources.getStringArray(R.array.gosegu)
-    val vichan = context.resources.getStringArray(R.array.vichan)
-
-    val mainChannel = context.resources.getStringArray(R.array.channel_main)
-    val subChannel = context.resources.getStringArray(R.array.channel_sub)
-    val replayChannel = context.resources.getStringArray(R.array.channel_replay)
+//    val wak = context.resources.getStringArray(R.array.wak)
+//    val wakta = context.resources.getStringArray(R.array.wakta)
+//    val ine = context.resources.getStringArray(R.array.ine)
+//    val jing = context.resources.getStringArray(R.array.jing)
+//    val lilpa = context.resources.getStringArray(R.array.lilpa)
+//    val jururu = context.resources.getStringArray(R.array.jururu)
+//    val gosegu = context.resources.getStringArray(R.array.gosegu)
+//    val vichan = context.resources.getStringArray(R.array.vichan)
+//
+//    val mainChannel = context.resources.getStringArray(R.array.channel_main)
+//    val subChannel = context.resources.getStringArray(R.array.channel_sub)
+//    val replayChannel = context.resources.getStringArray(R.array.channel_replay)
 
     suspend fun updateChannels() {
         val ids = context.resources.getStringArray(R.array.channelAll)
@@ -69,20 +69,20 @@ class YoutubeRepo @Inject constructor(
     }
 
     private fun setYoutubeMembers(channels: List<YoutubeChannel>) {
-        setYoutubeMember("wak", channels.filter { wak.contains(it.id) })
-        setYoutubeMember("wakta", channels.filter { wakta.contains(it.id) })
-        setYoutubeMember("ine", channels.filter { ine.contains(it.id) })
-        setYoutubeMember("jing", channels.filter { jing.contains(it.id) })
-        setYoutubeMember("lilpa", channels.filter { lilpa.contains(it.id) })
-        setYoutubeMember("jururu", channels.filter { jururu.contains(it.id) })
-        setYoutubeMember("gosegu", channels.filter { gosegu.contains(it.id) })
-        setYoutubeMember("vichan", channels.filter { vichan.contains(it.id) })
+        setYoutubeMember("wak", channels.filter { wak_channel.contains(it.id) })
+        setYoutubeMember("wakta", channels.filter { wakta_channel.contains(it.id) })
+        setYoutubeMember("ine", channels.filter { ine_channel.contains(it.id) })
+        setYoutubeMember("jing", channels.filter { jing_channel.contains(it.id) })
+        setYoutubeMember("lilpa", channels.filter { lilpa_channel.contains(it.id) })
+        setYoutubeMember("jururu", channels.filter { jururu_channel.contains(it.id) })
+        setYoutubeMember("gosegu", channels.filter { gosegu_channel.contains(it.id) })
+        setYoutubeMember("vichan", channels.filter { vichan_channel.contains(it.id) })
     }
 
     private fun setYoutubeMember(owner : String, channels: List<YoutubeChannel>) {
-        val main = channels.find { mainChannel.contains(it.id) }
-        val sub = channels.find { subChannel.contains(it.id) }
-        val replay = channels.find { replayChannel.contains(it.id) }
+        val main = channels.find { main_channel.contains(it.id) }
+        val sub = channels.find { sub_channel.contains(it.id) }
+        val replay = channels.find { replay_channel.contains(it.id) }
 
         val name : String
         val twitch : String
