@@ -72,7 +72,7 @@ class HomeActivity : BaseActivity() {
                         text = "RE:WIND"
                     }
                     2 -> {
-                        text = "몰루"
+                        text = "게시판"
                     }
                     3 -> {
                         text = "몰루"

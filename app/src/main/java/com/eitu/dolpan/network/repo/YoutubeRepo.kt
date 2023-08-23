@@ -20,21 +20,13 @@ class YoutubeRepo @Inject constructor(
     val fdb : FirebaseFirestore
     ) {
 
-//    val wak = context.resources.getStringArray(R.array.wak)
-//    val wakta = context.resources.getStringArray(R.array.wakta)
-//    val ine = context.resources.getStringArray(R.array.ine)
-//    val jing = context.resources.getStringArray(R.array.jing)
-//    val lilpa = context.resources.getStringArray(R.array.lilpa)
-//    val jururu = context.resources.getStringArray(R.array.jururu)
-//    val gosegu = context.resources.getStringArray(R.array.gosegu)
-//    val vichan = context.resources.getStringArray(R.array.vichan)
-//
-//    val mainChannel = context.resources.getStringArray(R.array.channel_main)
-//    val subChannel = context.resources.getStringArray(R.array.channel_sub)
-//    val replayChannel = context.resources.getStringArray(R.array.channel_replay)
-
     suspend fun updateChannels() {
-        val ids = context.resources.getStringArray(R.array.channelAll)
+        val allChannel = ArrayList<String>().apply {
+            addAll(main_channel)
+            addAll(sub_channel)
+            addAll(replay_channel)
+        }
+        val ids = allChannel
         try {
             val result = returnResult(api.getChannels(ids.joinToString(",")))
             when(result) {
@@ -147,6 +139,13 @@ class YoutubeRepo @Inject constructor(
         replay?.let { channel.put("replay", "${it.id},${it.snippet.title},${it.snippet.customUrl}") }
 
         return channel
+    }
+
+    /**
+     * Youtube 채널 동영상 리스트 호출
+     */
+    suspend fun getVideos() {
+
     }
 
 }

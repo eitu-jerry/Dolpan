@@ -13,6 +13,7 @@ import io.socket.emitter.Emitter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.apache.commons.io.IOCase
+import org.apache.commons.net.SocketClient
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -32,7 +33,22 @@ class MainActivity : BaseActivity() {
         binding.server.setOnClickListener {
             IntentHelper.intentDetail(this, Intent(this, ServerActivity::class.java))
         }
-
+        lifecycleScope.launch {
+            var socket : Socket? = null
+            try {
+                socket = IO.socket("https://www.youtube.com/feeds/videos.xml?channel_id=UCBkyj16n2snkRg1BAzpovXQ")
+                socket.connect()
+                socket.on(Socket.EVENT_CONNECT) {
+                    Log.d("Socket", it.toString())
+                }
+            } catch (e : Exception) {
+                e.printStackTrace()
+                if (socket != null) {
+                    socket.disconnect()
+                    socket.close()
+                }
+            }
+        }
     }
 
 }

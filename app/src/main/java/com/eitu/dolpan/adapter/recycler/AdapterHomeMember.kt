@@ -123,7 +123,7 @@ class AdapterHomeMember(
         }
 
         private fun getMember() : YoutubeMember? {
-            return when(adapterPosition) {
+            return when(bindingAdapterPosition) {
                 0 -> list.find { it.owner == "wak" }
                 1 -> list.find { it.owner == "ine" }
                 2 -> list.find { it.owner == "jing" }
