@@ -12,18 +12,18 @@ data class TwitchChatMessage(
     @SerializedName("content")
     val content: TwitchChatMessageContent,
     @SerializedName("sender")
-    val sender: TwitchChatMessageSender
+    val sender: TwitchChatMessageSender,
+    var sendAtLong : Long = -1L
 ) {
 
     private val dateFormat : SimpleDateFormat
         get() = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS'Z'", Locale.getDefault())
 
     fun getSendTime() : Long {
-        return try {
-            dateFormat.parse(sentAt).time
-        } catch (e : Exception) {
-            0
-        }
+        sendAtLong = dateFormat.parse(sentAt)?.time ?: -1
+        sendAtLong += 1000 * 60 * 60 * 9
+
+        return sendAtLong
     }
 
 }

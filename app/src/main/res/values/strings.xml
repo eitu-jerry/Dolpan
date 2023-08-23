@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Dolpan</string>
+
+    <string name="n_c_id">OkiIIuv7R4ZpBli1l4_2</string>
+    <string name="n_c_secret">M1l1MT2apk</string>
+
+    <string name="noChannelCustomUrl">\@오야~ 그런건 없단다</string>
+
+    <string name="noChannelDesc">이런, 채널 설명이 없지만 알잘딱하세요</string>
+
+</resources>

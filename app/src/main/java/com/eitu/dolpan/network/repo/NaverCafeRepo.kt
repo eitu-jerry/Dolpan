@@ -58,9 +58,9 @@ class NaverCafeRepo @Inject constructor(
 
             when(result) {
                 is DolpanResult.Success -> {
-                    Log.d("getMemberArticles", "success")
-                    val articleList = result.data.message.result.articleList
-                        .filter { it.getWriteTime() > lastArticleTime }
+                    var articleList = result.data.message.result.articleList
+                    Log.d("getMemberArticles", "success ${articleList.size} ${articleList.first().toWriteTimeLong()}")
+                    articleList = articleList.filter { it.toWriteTimeLong() > lastArticleTime }
 
                     if (articleList.isEmpty()) {
                         throw Exception("${memberMap[memberId]} has no new article")
@@ -73,7 +73,7 @@ class NaverCafeRepo @Inject constructor(
                             .add(Chat(
                                 owner = memberMap[memberId] ?: "",
                                 type = "naverCafe",
-                                date = it.getFormattedWriteTime(),
+                                date = it.toWriteTimeLong(),
                                 title = it.subject,
                                 id = it.articleid.toString()
                             ))
@@ -85,7 +85,7 @@ class NaverCafeRepo @Inject constructor(
                             }
                     }
 
-                    return articleList.last().getWriteTime()
+                    return articleList.first().toWriteTimeLong()
 
                 }
                 is DolpanResult.Error -> {
@@ -101,59 +101,6 @@ class NaverCafeRepo @Inject constructor(
         }
 
         return lastArticleTime
-    }
-
-    suspend fun getMemberArticles(memberId : String) {
-        try {
-            var page = 1
-            while (true) {
-                val result = returnResult(api.getMemberArticles(memberKey = memberId, page = page++))
-                Log.d("getMemberArticles", "called")
-
-                when(result) {
-                    is DolpanResult.Success -> {
-                        Log.d("getMemberArticles", "success")
-                        val articleList = result.data.message.result.articleList
-                            .filter { it.getWriteTime() > 1690815600 }
-
-                        if (articleList.isEmpty()) {
-                            throw Exception("${memberMap[memberId]} has no new article")
-                        }
-
-                        Log.d("getMemberArticles", "is not empty ${articleList.size}")
-
-                        articleList.forEach {
-                            Log.d("getArticle", "${it.subject} ${it.getFormattedWriteTime()}")
-                            fdb.collection("item")
-                                .add(Chat(
-                                    owner = memberMap[memberId] ?: "",
-                                    type = "naverCafe",
-                                    date = it.getFormattedWriteTime(),
-                                    title = it.subject,
-                                    id = it.articleid.toString()
-                                ))
-                                .await()
-//                                .addOnSuccessListener {
-//                                    Log.d("getMemberArticles", "success to add")
-//                                }
-//                                .addOnFailureListener {
-//                                    Log.d("getMemberArticles", "fail to add")
-//                                }
-                        }
-                    }
-                    is DolpanResult.Error -> {
-                        Log.d("getMemberArticles", "error")
-                        result.exception.printStackTrace()
-                    }
-                    else -> {
-
-                    }
-                }
-            }
-
-        } catch (e : Exception) {
-            Log.d("getMemberArticle", e.message.toString())
-        }
     }
 
 }

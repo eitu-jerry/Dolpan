@@ -1,10 +1,13 @@
 package com.eitu.dolpan.view.fragment
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import com.eitu.dolpan.databinding.FragmentMyBinding
+import com.eitu.dolpan.etc.IntentHelper
 import com.eitu.dolpan.network.repo.YoutubeRepo
+import com.eitu.dolpan.view.activity.ManageItemActivity
 import com.eitu.dolpan.view.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -37,6 +40,9 @@ class MyFragment: BaseFragment() {
                     youtube.updateChannels()
                 }
             }
+        }
+        binding.manageItem.setOnClickListener {
+            IntentHelper.intentDetail(requireActivity(), Intent(context, ManageItemActivity::class.java))
         }
     }
 

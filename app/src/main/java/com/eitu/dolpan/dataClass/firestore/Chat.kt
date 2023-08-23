@@ -15,7 +15,7 @@ data class Chat(
     @PropertyName("type")
     val type: String = "",
     @PropertyName("date")
-    val date: String = "",
+    val date: Long = -1L,
     @PropertyName("title")
     val title: String = "",
     @PropertyName("id")
@@ -24,14 +24,13 @@ data class Chat(
     val sendFrom: String? = null,
 ) {
 
-    private val fromFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+    private val fromFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
     private val toFormat = SimpleDateFormat("yyyy년 MM월 dd일 EEEEEE요일", Locale.getDefault())
 
     fun getFormattedTime() : String {
-        var timeText : String
+        var timeText = fromFormat.format(date)
 
         try {
-            timeText = date.split(" ")[1]
             val hour = timeText.split(":")[0].toInt()
             val minute = timeText.split(":")[1]
             if (hour > 12) {
@@ -46,7 +45,7 @@ data class Chat(
     }
 
     fun getFormattedDate() : String? {
-        return fromFormat.parse(date)?.let { toFormat.format(it) }
+        return toFormat.format(date)
     }
 
 }

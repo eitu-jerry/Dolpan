@@ -26,26 +26,12 @@ class MainActivity : BaseActivity() {
     }
 
     override fun init() {
-//        IntentHelper.intentDetail(this, Intent(this, ServerActivity::class.java))
-        IntentHelper.intentDetail(this, Intent(this, HomeActivity::class.java))
-        finish()
-//        lifecycleScope.launch(Dispatchers.IO) {
-//            var socket : Socket? = null
-//            try {
-//                socket = IO.socket("https://www.youtube.com/feeds/videos.xml?channel_id=UCCA8UWUW80iHqK9ymdjRwPg")
-//                socket.connect()
-//                socket.on("af") {
-//                    Log.d("asdf", it.toString())
-//                }
-//            } catch (e : Exception) {
-//                e.printStackTrace()
-//                if (socket != null && socket.isActive) {
-//                    socket.disconnect()
-//                    socket.off("af")
-//                    socket.close()
-//                }
-//            }
-//        }
+        binding.home.setOnClickListener {
+            IntentHelper.intentDetail(this, Intent(this, HomeActivity::class.java))
+        }
+        binding.server.setOnClickListener {
+            IntentHelper.intentDetail(this, Intent(this, ServerActivity::class.java))
+        }
 
     }
 

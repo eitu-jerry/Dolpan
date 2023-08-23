@@ -1,6 +1,7 @@
 package com.eitu.dolpan.dataClass.naver.member
 
 
+import android.util.Log
 import com.google.gson.annotations.SerializedName
 import java.text.SimpleDateFormat
 import java.util.*
@@ -85,7 +86,8 @@ data class Article(
     @SerializedName("writerid")
     val writerid: String,
     @SerializedName("writernickname")
-    val writernickname: String
+    val writernickname: String,
+    var writedtLong : Long = -1L
 ) {
 
     private val dateFormat : SimpleDateFormat
@@ -93,20 +95,31 @@ data class Article(
     private val dateFormat_ : SimpleDateFormat
         get() = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.KOREA)
 
-    fun getWriteTime() : Long {
-        val time = dateFormat.parse(writedt).time
-        return try {
-            if (writedt.split(" ").last() == "PM")
-                time + 1000 * 60 * 60 * 12
-            else
-                time
-        } catch (e : Exception) {
-            0
+    fun toWriteTimeLong() : Long {
+//        if (writedtLong == -1L) {
+//            try {
+//                Log.d("writedt", writedt)
+//                writedtLong = dateFormat.parse(writedt)?.time ?: -1
+//                if (writedt.split(" ").last() == "PM") {
+//                    writedtLong += 1000 * 60 * 60 * 12
+//                }
+//                Log.d("writedtLong", writedtLong.toString())
+//            } catch (e : Exception) {
+//                writedtLong = -1L
+//                Log.d("toWriteTimeLong", e.message.toString())
+//            }
+//        }
+
+        writedtLong = dateFormat.parse(writedt)?.time ?: -1
+        if (writedt.split(" ").last() == "PM") {
+            writedtLong += 1000 * 60 * 60 * 12
         }
+
+        return writedtLong
     }
 
     fun getFormattedWriteTime() : String {
-        return dateFormat_.format(getWriteTime())
+        return dateFormat_.format(toWriteTimeLong())
     }
 
 }

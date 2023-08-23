@@ -35,6 +35,7 @@ class TwitchRepo @Inject constructor(
         Pair(cotton__123, "jururu"),
         Pair(gesegugosegu, "gosegu"),
         Pair(viichan6, "vichan")
+        //Pair(165930742, "jerry")
     )
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
 
@@ -112,7 +113,7 @@ class TwitchRepo @Inject constructor(
                                 .add(Chat(
                                     owner = memberMap[channelOwner.toInt()] ?: "",
                                     type = "twitchChat",
-                                    date = dateFormat.format(System.currentTimeMillis()),
+                                    date = it.getSendTime(),
                                     title = it.content.text,
                                     sendFrom = if (sender == channelOwner) null else memberMap[sender.toInt()]
                                 ))

@@ -133,13 +133,6 @@ class ChatActivity: BaseActivity() {
             state = listState,
             reverseLayout = true
         ) {
-//            coroutineScope.launch {
-//                val size = chatList.itemCount
-//                val limit = 13
-//                if (size > limit && listState.firstVisibleItemIndex < limit - 1) {
-//                    listState.scrollToItem(index = size - 1)
-//                }
-//            }
             itemsIndexed(items = chatList.itemSnapshotList) { i, item ->
                 item?.let {
                     var nextItem: Chat? = null
