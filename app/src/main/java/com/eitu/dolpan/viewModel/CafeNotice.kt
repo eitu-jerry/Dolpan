@@ -23,11 +23,11 @@ class CafeNotice @Inject constructor(
         viewModelScope.launch {
             val noticeResult = withContext(Dispatchers.IO) {
                 //카페 공지사항
-                repo.getMenuArticles("24", 12)
+                repo.getMenuArticles(24, offset = 12)
             }
             val isdNoticeResult = withContext(Dispatchers.IO) {
                 //이세돌 공지사항
-                repo.getMenuArticles("345", 12)
+                repo.getMenuArticles(345, offset = 12)
             }
             listNotice.addAll(noticeResult)
             listIsdNotice.addAll(isdNoticeResult)

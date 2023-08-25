@@ -15,7 +15,8 @@
     <color name="gray">#919191</color>
     <color name="darkGray">#616161</color>
     <color name="transBlack">#AAFFFFFF</color>
-    <color name="lightGray">#FFCCCCCC</color>
+    <color name="lightGray">#FFEEEEEE</color>
+    <color name="textLightGray">#FF888888</color>
 
     <color name="wak">#008D62</color>
     <color name="ine">#8A2BE2</color>

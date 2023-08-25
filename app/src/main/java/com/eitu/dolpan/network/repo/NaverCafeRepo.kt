@@ -25,11 +25,11 @@ class NaverCafeRepo @Inject constructor(
         Pair(vichanCafe, "vichan")
     )
 
-    suspend fun getMenuArticles(menuId : String, offset : Int = 10) : List<Article> {
+    suspend fun getMenuArticles(menuId : Int? = null, page : Int = 1, offset : Int = 10) : List<Article> {
         var listArticle : List<Article> = emptyList()
 
         try {
-            val result = returnResult(api.getMenuArticles(menuId = menuId, offset = offset))
+            val result = returnResult(api.getMenuArticles(menuId = menuId, page = page, offset = offset))
 
             when(result) {
                 is DolpanResult.Success -> {

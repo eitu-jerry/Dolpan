@@ -93,7 +93,7 @@ data class Article(
     @SerializedName("replyListOrder")
     val replyListOrder: String,
     @SerializedName("representImage")
-    val representImage: String,
+    val representImage: String? = null,
     @SerializedName("representImageType")
     val representImageType: String,
     @SerializedName("restrictMenu")
@@ -114,8 +114,6 @@ data class Article(
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     }
 
-//    private val dateFormat: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-//        get() = if (field != null) field else SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     private val oneSecond: Long = 1000
         get() = if (field > 0) field else 1000
     private val oneMinute: Long = oneSecond * 60
