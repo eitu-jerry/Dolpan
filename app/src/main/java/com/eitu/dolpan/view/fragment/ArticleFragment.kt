@@ -1,11 +1,14 @@
 package com.eitu.dolpan.view.fragment
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -16,6 +19,9 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.viewModels
 import com.eitu.dolpan.R
+import com.eitu.dolpan.etc.IntentHelper
+import com.eitu.dolpan.network.api.menuMap
+import com.eitu.dolpan.view.activity.ArticleActivity
 import com.eitu.dolpan.view.base.BaseActivity
 import com.eitu.dolpan.view.base.BaseFragment
 import com.eitu.dolpan.view.composable.MenuBar
@@ -59,7 +65,7 @@ class ArticleFragment : BaseFragment() {
             },
             scaffoldState = scaffoldState,
             drawerContent = {
-
+                MenuDrawer()
             }
         ) {
             LazyColumn(modifier = Modifier
@@ -81,6 +87,21 @@ class ArticleFragment : BaseFragment() {
         }
     }
 
-
+    @Composable
+    fun MenuDrawer() {
+        Column() {
+            menuMap.keys.forEach {
+                TextButton(
+                    onClick = {
+                        IntentHelper.intentDetail(activity, Intent(activity, ArticleActivity::class.java).apply {
+                            putExtra("menuId", it)
+                        })
+                    }
+                ) {
+                    Text(text = menuMap[it] ?: "우왁끼는 살아있다")
+                }
+            }
+        }
+    }
 
 }

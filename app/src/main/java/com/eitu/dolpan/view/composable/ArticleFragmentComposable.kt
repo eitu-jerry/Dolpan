@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -12,6 +13,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,9 +38,9 @@ import kotlinx.coroutines.launch
 import java.lang.Exception
 
 @Composable
-fun MenuBar(scaffoldState: ScaffoldState, coroutineScope: CoroutineScope) {
+fun MenuBar(scaffoldState: ScaffoldState, coroutineScope: CoroutineScope, title: String? = "우왁끼는 살아있다") {
     TopAppBar(
-        title = { Text(text = "카페글") },
+        title = { Text(text = title ?: "우왁끼는 살아있다") },
         contentColor = Color.Black,
         backgroundColor = Color.Transparent,
         navigationIcon = {
@@ -49,11 +51,6 @@ fun MenuBar(scaffoldState: ScaffoldState, coroutineScope: CoroutineScope) {
             } },
         elevation = 0.dp
     )
-}
-
-@Composable
-fun MenuDrawer() {
-
 }
 
 @Composable
@@ -206,6 +203,9 @@ fun getStyledSubject(subject : String) : AnnotatedString {
     else if (subject.contains("[비챤]")) {
         head = "[비챤]"
     }
+    else if (subject.contains("[왁굳이야기]")) {
+        head = "[왁굳이야기]"
+    }
     else {
         head = null
     }
@@ -223,6 +223,7 @@ private fun styledHead(head : String) : AnnotatedString {
         "[주르르]" -> colorResource(id = R.color.jururu)
         "[고세구]" -> colorResource(id = R.color.gosegu)
         "[비챤]" -> colorResource(id = R.color.vichan)
+        "[왁굳이야기]" -> colorResource(id = R.color.wak)
         else -> Color.Black
     }
 

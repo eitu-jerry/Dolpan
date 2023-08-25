@@ -10,7 +10,9 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.Source
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 class ArticlePagingSource (
     private val repo : NaverCafeRepo,
@@ -21,7 +23,13 @@ class ArticlePagingSource (
         try {
             val key = params.key ?: 1
 
-            val listArticle = repo.getMenuArticles(menuId = menuId, page = key, offset = params.loadSize)
+            val listArticle = withContext(Dispatchers.IO) {
+                repo.getMenuArticles(
+                    menuId = if(menuId != -1) menuId else null,
+                    page = key,
+                    offset = params.loadSize
+                )
+            }
 
             return LoadResult.Page(
                 data = listArticle,

@@ -107,7 +107,11 @@ data class Article(
     @SerializedName("writeDateTimestamp")
     val writeDateTimestamp: Long,
     @SerializedName("writerNickname")
-    val writerNickname: String
+    val writerNickname: String,
+    @SerializedName("useHead")
+    val useHead : Boolean,
+    @SerializedName("headName")
+    val headName : String,
 ) {
 
     companion object {

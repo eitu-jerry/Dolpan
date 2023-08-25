@@ -63,7 +63,14 @@ fun ArticleItemForActivity(item : Article, activity: BaseActivity) {
                     }
                 }
         ) {
-            Text(text = getStyledSubject(subject = item.subject), fontWeight = FontWeight(500), fontSize = subjectSize)
+            Text(
+                text = getStyledSubject(
+                    if (item.useHead) "[${item.headName}] ${item.subject}"
+                    else item.subject
+                ),
+                fontWeight = FontWeight(500),
+                fontSize = subjectSize
+            )
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text(
                     text = item.writerNickname,
