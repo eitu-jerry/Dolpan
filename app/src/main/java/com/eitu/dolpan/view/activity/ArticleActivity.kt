@@ -7,6 +7,7 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -56,12 +57,14 @@ class ArticleActivity : BaseActivity() {
 
         val scaffoldState = rememberScaffoldState()
         val coroutineScope = rememberCoroutineScope()
+        val listState = rememberLazyListState()
 
         Scaffold(
             topBar = {
                 MenuBar(
                     scaffoldState = scaffoldState,
                     coroutineScope = coroutineScope,
+                    listState = listState,
                     title = title
                 )
             },
@@ -70,7 +73,10 @@ class ArticleActivity : BaseActivity() {
                 MenuDrawer(scaffoldState, coroutineScope)
             }
         ) { padding ->
-            LazyColumn(modifier = Modifier.padding(padding)) {
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.padding(padding)
+            ) {
                 when {
                     list.loadState.refresh is LoadState.Loading -> {
 

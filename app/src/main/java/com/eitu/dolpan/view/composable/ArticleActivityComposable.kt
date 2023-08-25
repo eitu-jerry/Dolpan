@@ -3,7 +3,6 @@ package com.eitu.dolpan.view.composable
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,8 +24,6 @@ import com.eitu.dolpan.dataClass.naver.menu.Article
 import com.eitu.dolpan.etc.IntentHelper
 import com.eitu.dolpan.view.activity.WebViewActivity
 import com.eitu.dolpan.view.base.BaseActivity
-import com.eitu.dolpan.view.composable.getStyledSubject
-import java.lang.Exception
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
@@ -39,7 +36,8 @@ fun ArticleItemForActivity(item : Article, activity: BaseActivity) {
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .height(85.dp)
+            .defaultMinSize(minHeight = 85.dp)
+            .wrapContentHeight()
             .padding(10.dp)
     ) {
         Column(
@@ -96,6 +94,7 @@ fun ArticleItemForActivity(item : Article, activity: BaseActivity) {
                 contentDescription = "image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
+                    .width(65.dp)
                     .aspectRatio(1f)
                     .clip(RoundedCornerShape(5.dp))
             )
@@ -105,7 +104,7 @@ fun ArticleItemForActivity(item : Article, activity: BaseActivity) {
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .width(40.dp)
-                .fillMaxHeight()
+                .height(65.dp)
                 .background(
                     color = colorResource(id = R.color.lightGray),
                     shape = RoundedCornerShape(5.dp)

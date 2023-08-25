@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -38,9 +39,13 @@ import kotlinx.coroutines.launch
 import java.lang.Exception
 
 @Composable
-fun MenuBar(scaffoldState: ScaffoldState, coroutineScope: CoroutineScope, title: String? = "우왁끼는 살아있다") {
+fun MenuBar(scaffoldState: ScaffoldState, coroutineScope: CoroutineScope, listState : LazyListState? = null, title: String? = "우왁끼는 살아있다") {
     TopAppBar(
-        title = { Text(text = title ?: "우왁끼는 살아있다") },
+        title = { Text(text = title ?: "우왁끼는 살아있다", modifier = Modifier.clickable {
+            listState?.let {
+                coroutineScope.launch{it.scrollToItem(0)}
+            }
+        }) },
         contentColor = Color.Black,
         backgroundColor = Color.Transparent,
         navigationIcon = {
