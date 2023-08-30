@@ -2,19 +2,19 @@ package com.eitu.dolpan.view.composable
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,23 +28,32 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.MutableLiveData
 import com.eitu.dolpan.R
 import com.eitu.dolpan.dataClass.naver.menu.Article
+import com.eitu.dolpan.dataClass.naver.sideMenu.Menu
 import com.eitu.dolpan.etc.IntentHelper
-import com.eitu.dolpan.view.activity.ArticleActivity
 import com.eitu.dolpan.view.activity.WebViewActivity
 import com.eitu.dolpan.view.base.BaseActivity
+import com.eitu.dolpan.viewModel.cafeArticle.CafeArticle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
 @Composable
-fun MenuBar(scaffoldState: ScaffoldState, coroutineScope: CoroutineScope, listState : LazyListState? = null, title: String? = "우왁끼는 살아있다") {
+fun MenuBar(
+    listArticle : CafeArticle,
+    selectedMenu: MutableLiveData<Menu>,
+    scaffoldState: ScaffoldState,
+    listState : LazyListState,
+    coroutineScope: CoroutineScope
+) {
     TopAppBar(
-        title = { Text(text = title ?: "우왁끼는 살아있다", modifier = Modifier.clickable {
-            listState?.let {
-                coroutineScope.launch{it.scrollToItem(0)}
-            }
+        title = {
+            Text(text = "왁물원", modifier = Modifier.clickable {
+                coroutineScope.launch{listState.scrollToItem(0)}
+                listArticle.setMenuId(-1)
+                selectedMenu.value = Menu(menuId = -1, menuName = "전체 게시글")
         }) },
         contentColor = Color.Black,
         backgroundColor = Color.Transparent,
@@ -58,11 +67,15 @@ fun MenuBar(scaffoldState: ScaffoldState, coroutineScope: CoroutineScope, listSt
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun NoticeArticle(
     title : String,
     list : SnapshotStateList<Article>,
     activity: BaseActivity,
+    pagerState: PagerState,
+    selectedMenu: MutableLiveData<Menu>,
+    coroutineScope: CoroutineScope,
     menuId : Int
 ) {
     Column(
@@ -89,11 +102,10 @@ fun NoticeArticle(
                 modifier = Modifier
                     .padding(end = 15.dp)
                     .clickable {
-                        IntentHelper.intentDetail(
-                            activity,
-                            Intent(activity, ArticleActivity::class.java).apply {
-                                putExtra("menuId", menuId)
-                            })
+                        coroutineScope.launch {
+                            pagerState.scrollToPage(0)
+                            selectedMenu.value = Menu(menuId = menuId, menuName = title)
+                        }
                     }
             )
         }

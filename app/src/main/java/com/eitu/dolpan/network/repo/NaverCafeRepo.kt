@@ -3,6 +3,7 @@ package com.eitu.dolpan.network.repo
 import android.util.Log
 import com.eitu.dolpan.dataClass.firestore.Chat
 import com.eitu.dolpan.dataClass.naver.menu.Article
+import com.eitu.dolpan.dataClass.naver.sideMenu.Menu
 import com.eitu.dolpan.network.DolpanResult
 import com.eitu.dolpan.network.api.*
 import com.eitu.dolpan.network.returnResult
@@ -24,6 +25,25 @@ class NaverCafeRepo @Inject constructor(
         Pair(goseguCafe, "gosegu"),
         Pair(vichanCafe, "vichan")
     )
+
+    suspend fun getSideMenu() : List<Menu> {
+        try {
+            val result = returnResult(api.getSideMenu())
+
+            when(result) {
+                is DolpanResult.Success -> {
+                    return result.data.message.result.menus
+                }
+                is DolpanResult.Error -> {
+                    throw result.exception
+                }
+            }
+        } catch (e : Exception) {
+            e.printStackTrace()
+        }
+
+        return emptyList()
+    }
 
     suspend fun getMenuArticles(menuId : Int? = null, page : Int = 1, offset : Int = 10) : List<Article> {
         var listArticle : List<Article> = emptyList()

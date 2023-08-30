@@ -19,9 +19,6 @@
             android:name=".view.activity.WebViewActivity"
             android:exported="false" />
         <activity
-            android:name=".view.activity.ArticleActivity"
-            android:exported="false" />
-        <activity
             android:name=".view.activity.ManageItemActivity"
             android:exported="false" />
         <activity
