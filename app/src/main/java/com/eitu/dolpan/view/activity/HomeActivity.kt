@@ -13,6 +13,7 @@ import com.eitu.dolpan.databinding.ActivityHomeBinding
 import com.eitu.dolpan.view.dialog.DialogMemberSelected
 import com.eitu.dolpan.viewModel.MemberSelected
 import com.eitu.dolpan.view.base.BaseActivity
+import com.eitu.dolpan.viewModel.WriteArticle
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.collections.ArrayList
@@ -33,10 +34,12 @@ class HomeActivity : BaseActivity() {
     }
 
     private val memberSelected : MemberSelected by viewModels()
+    private val writeArticle : WriteArticle by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         DialogMemberSelected(this, memberSelected)
+        writeArticle.setDialog(this@HomeActivity)
     }
 
     override fun setBinding(): View {

@@ -4,12 +4,20 @@ import android.app.Activity
 import android.content.Intent
 import com.eitu.dolpan.R
 import com.eitu.dolpan.view.activity.MainActivity
+import com.eitu.dolpan.view.activity.WebViewActivity
 
 class IntentHelper {
 
     companion object {
         fun intentDetail(activity: Activity, intent: Intent) {
             activity.startActivity(intent)
+            inDetailAnim(activity)
+        }
+
+        fun goToWebView(activity: Activity, url : String) {
+            activity.startActivity(Intent(activity, WebViewActivity::class.java).apply {
+                putExtra("url", url)
+            })
             inDetailAnim(activity)
         }
 

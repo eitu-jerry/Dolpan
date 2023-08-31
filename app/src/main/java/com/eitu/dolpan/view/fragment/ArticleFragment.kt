@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import androidx.activity.viewModels
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -16,20 +18,28 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.*
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.eitu.dolpan.R
 import com.eitu.dolpan.dataClass.naver.menu.Article
 import com.eitu.dolpan.dataClass.naver.sideMenu.Menu
@@ -40,10 +50,12 @@ import com.eitu.dolpan.view.composable.ArticleItemForActivity
 import com.eitu.dolpan.view.composable.MenuBar
 import com.eitu.dolpan.view.composable.NoticeArticle
 import com.eitu.dolpan.viewModel.CafeNotice
+import com.eitu.dolpan.viewModel.WriteArticle
 import com.eitu.dolpan.viewModel.cafeArticle.CafeArticle
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -54,6 +66,7 @@ class ArticleFragment : BaseFragment() {
 
     private val listArticle : CafeArticle by viewModels()
     private val cafeNotice : CafeNotice by viewModels()
+    private val writeArticle : WriteArticle by activityViewModels()
 
     private val sideMenu = mutableStateListOf<Menu>()
     private val selectedMenu = MutableLiveData<Menu>()
@@ -88,7 +101,7 @@ class ArticleFragment : BaseFragment() {
         }
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
+    @OptIn(ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class)
     @SuppressLint("UnrememberedMutableState")
     @Composable
     private fun App() {
@@ -108,7 +121,7 @@ class ArticleFragment : BaseFragment() {
         selectedMenu.observe(activity) {
             currentMenu = it.menuName
         }
-        
+
         Scaffold(
             topBar = {
                 MenuBar(
@@ -122,6 +135,32 @@ class ArticleFragment : BaseFragment() {
             scaffoldState = scaffoldState,
             drawerContent = {
                 MenuDrawer(scaffoldState.drawerState, pagerState, listState, coroutineScope)
+            },
+            floatingActionButton = {
+                if (pagerState.currentPage == 0) {
+                    GlideImage(
+                        model = R.drawable.button_write,
+                        contentDescription = "writeButton",
+                        modifier = Modifier
+                            .width(60.dp)
+                            .height(60.dp)
+                            .clickable {
+                                val menu = selectedMenu.value
+                                if (menu != null) {
+                                    if (menu.menuId == -1) {
+                                        writeArticle.loadUrl("https://m.cafe.naver.com/ca-fe/web/cafes/27842958/articles/write")
+                                    }
+                                    else {
+                                        writeArticle.loadUrl("https://m.cafe.naver.com/ca-fe/web/cafes/27842958/menus/${menu.menuId}/articles/write")
+                                    }
+                                }
+                                else {
+                                    writeArticle.loadUrl("https://m.cafe.naver.com/ca-fe/web/cafes/27842958/articles/write")
+                                }
+
+                            }
+                    )
+                }
             }
         ) {
             Column() {
@@ -178,7 +217,7 @@ class ArticleFragment : BaseFragment() {
             }
         }
 
-        LazyColumn(contentPadding = PaddingValues(10.dp)) {
+        LazyColumn(contentPadding = PaddingValues(10.dp), modifier = Modifier.fillMaxWidth()) {
             items(sideMenu) {
                 if (it.menuType == "F") {
                     Text(
@@ -216,23 +255,38 @@ class ArticleFragment : BaseFragment() {
         }
     }
 
+    @OptIn(ExperimentalMaterialApi::class)
     @Composable
     private fun ArticleLayout(list : LazyPagingItems<Article>,listState : LazyListState, paddingValues: PaddingValues) {
 
-        LazyColumn(
-            state = listState,
-            modifier = Modifier.padding(paddingValues)
-        ) {
-            when {
-                list.loadState.refresh is LoadState.Loading -> {
+        val coroutineScope = rememberCoroutineScope()
+        var refreshing by remember { mutableStateOf(false) }
+        fun refresh() = coroutineScope.launch {
+            refreshing = true
+            val refresh = async { listArticle.refresh() }
+            refresh.await()
+            refreshing = false
+        }
+        val refreshState = rememberPullRefreshState(refreshing = refreshing, onRefresh = { refresh() })
 
-                }
-                else -> {
-                    items(list.itemCount) {article ->
-                        list[article]?.let { ArticleItemForActivity(item = it, activity) }
+        Box(modifier = Modifier
+            .padding(paddingValues)
+            .pullRefresh(refreshState)) {
+            LazyColumn(
+                state = listState
+            ) {
+                when {
+                    list.loadState.refresh is LoadState.Loading -> {
+
+                    }
+                    else -> {
+                        items(list.itemCount) {article ->
+                            list[article]?.let { ArticleItemForActivity(item = it, activity) }
+                        }
                     }
                 }
             }
+            PullRefreshIndicator(refreshing, refreshState, Modifier.align(Alignment.TopCenter))
         }
     }
 

@@ -133,11 +133,11 @@ class ChatActivity: BaseActivity() {
             state = listState,
             reverseLayout = true
         ) {
-            itemsIndexed(items = chatList.itemSnapshotList) { i, item ->
-                item?.let {
+            items(chatList.itemCount) {position ->
+                chatList[position]?.let {
                     var nextItem: Chat? = null
-                    if (i < chatList.itemCount - 1) {
-                        nextItem = chatList.itemSnapshotList[i + 1]
+                    if (position < chatList.itemCount - 1) {
+                        nextItem = chatList.itemSnapshotList[position + 1]
                     }
 
                     ChatShell(nextItem = nextItem, item = it)

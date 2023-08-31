@@ -49,4 +49,8 @@ class CafeArticle @Inject constructor(
         this._menuId.value = menuId
     }
 
+    fun refresh() {
+        _menuId.value = menuId.value
+    }
+
 }
