@@ -41,9 +41,6 @@ class MyFragment: BaseFragment() {
                 }
             }
         }
-        binding.manageItem.setOnClickListener {
-            IntentHelper.intentDetail(requireActivity(), Intent(context, ManageItemActivity::class.java))
-        }
     }
 
 }

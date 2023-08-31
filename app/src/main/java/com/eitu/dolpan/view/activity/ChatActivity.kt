@@ -282,10 +282,9 @@ class ChatActivity: BaseActivity() {
                     intent.data = Uri.parse("navercafe://cafe/27842958/${id}")
                     startActivity(intent)
                 } catch (e: java.lang.Exception) {
-                    val intent = Intent(Intent.ACTION_VIEW)
-                    intent.data =
-                        Uri.parse("https://m.cafe.naver.com/ca-fe/web/cafes/steamindiegame/articles/${id}?useCafeId=false")
-                    startActivity(intent)
+                    IntentHelper.intentDetail(this, Intent(this, WebViewActivity::class.java).apply {
+                        putExtra("url", "https://m.cafe.naver.com/ca-fe/web/cafes/steamindiegame/articles/${id}?useCafeId=false")
+                    })
                 }
             }
         ) {
