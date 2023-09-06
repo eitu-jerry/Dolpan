@@ -14,6 +14,11 @@ class IntentHelper {
             inDetailAnim(activity)
         }
 
+        fun intentDetail(activity: Activity, goto: Class<*>) {
+            activity.startActivity(Intent(activity, goto))
+            inDetailAnim(activity)
+        }
+
         fun goToWebView(activity: Activity, url : String) {
             activity.startActivity(Intent(activity, WebViewActivity::class.java).apply {
                 putExtra("url", url)

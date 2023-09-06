@@ -162,6 +162,8 @@ dependencies {
 
     //socket
     implementation("io.socket:socket.io-client:2.1.0")
+
+    implementation "jp.wasabeef:blurry:4.0.1"
 }
 
 // Allow references to generated code
