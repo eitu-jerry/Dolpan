@@ -4,23 +4,23 @@
     <data>
         <variable
             name="model"
-            type="com.eitu.dolpan.test.TestViewModel" />
+            type="com.eitu.dolpan.viewModel.HomeItems" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appBar"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="250dp"
             android:background="@null"
-            android:fitsSystemWindows="true">
+            app:elevation="0dp">
 
             <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:id="@+id/collapsingToolBar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed"
@@ -30,10 +30,9 @@
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolBar"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
+                    android:layout_height="80dp"
                     app:layout_collapseMode="pin"
-                    android:background="@null"
-                    app:title="ToolBar" />
+                    android:background="@null" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -65,19 +64,11 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/scrollView"
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-            android:fillViewport="true">
-
-            <FrameLayout
-                android:id="@+id/frame"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-        </androidx.core.widget.NestedScrollView>
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

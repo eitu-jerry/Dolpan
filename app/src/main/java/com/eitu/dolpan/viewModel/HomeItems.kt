@@ -1,4 +1,4 @@
-package com.eitu.dolpan.test
+package com.eitu.dolpan.viewModel
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.MutableLiveData
@@ -16,7 +16,7 @@ import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
-class TestViewModel @Inject constructor(val fdb : FirebaseFirestore) : ViewModel() {
+class HomeItems @Inject constructor(val fdb : FirebaseFirestore) : ViewModel() {
 
     val date = MutableLiveData<String>()
     val time = MutableLiveData<String>()
@@ -37,7 +37,7 @@ class TestViewModel @Inject constructor(val fdb : FirebaseFirestore) : ViewModel
 
         viewModelScope.launch {
             val result = fdb.collection("item")
-                .orderBy("date", Query.Direction.ASCENDING)
+                .orderBy("date", Query.Direction.DESCENDING)
                 .limit(100)
                 .get()
                 .asDeferred()

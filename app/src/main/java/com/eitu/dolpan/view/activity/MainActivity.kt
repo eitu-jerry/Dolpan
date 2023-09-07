@@ -4,7 +4,6 @@ import android.content.Intent
 import android.view.View
 import com.eitu.dolpan.databinding.ActivityMainBinding
 import com.eitu.dolpan.etc.IntentHelper
-import com.eitu.dolpan.test.TestActivity
 import com.eitu.dolpan.view.base.BaseActivity
 
 class MainActivity : BaseActivity() {
@@ -42,7 +41,6 @@ class MainActivity : BaseActivity() {
 //                }
 //            }
 //        }
-        IntentHelper.intentDetail(this, TestActivity::class.java)
     }
 
 }
