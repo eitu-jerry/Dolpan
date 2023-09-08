@@ -5,8 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eitu.dolpan.dataClass.firestore.Chat
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
+import com.eitu.dolpan.dataClass.firestore.YoutubeMember
+import com.google.firebase.firestore.*
+import com.google.firebase.firestore.EventListener
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -21,6 +22,7 @@ class HomeItems @Inject constructor(val fdb : FirebaseFirestore) : ViewModel() {
     val date = MutableLiveData<String>()
     val time = MutableLiveData<String>()
     val list = mutableStateListOf<Chat>()
+    val member = mutableStateListOf<YoutubeMember>()
 
     init {
 
@@ -43,6 +45,17 @@ class HomeItems @Inject constructor(val fdb : FirebaseFirestore) : ViewModel() {
                 .asDeferred()
 
             list.addAll(result.await().toObjects(Chat::class.java))
+        }
+
+        viewModelScope.launch {
+            fdb.collection("youtubeMember")
+                .whereEqualTo("isLive", true)
+                .addSnapshotListener { value, error ->
+                     value?.let {
+                         val members = it.toObjects(YoutubeMember::class.java)
+
+                     }
+                }
         }
     }
 
