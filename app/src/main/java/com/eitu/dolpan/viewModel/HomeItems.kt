@@ -40,7 +40,7 @@ class HomeItems @Inject constructor(val fdb : FirebaseFirestore) : ViewModel() {
         viewModelScope.launch {
             val result = fdb.collection("item")
                 .orderBy("date", Query.Direction.DESCENDING)
-                .limit(100)
+                .limit(10)
                 .get()
                 .asDeferred()
 
@@ -52,8 +52,13 @@ class HomeItems @Inject constructor(val fdb : FirebaseFirestore) : ViewModel() {
                 .whereEqualTo("isLive", true)
                 .addSnapshotListener { value, error ->
                      value?.let {
-                         val members = it.toObjects(YoutubeMember::class.java)
+                         val inRealTime = it.toObjects(YoutubeMember::class.java)
 
+                         val toRemove = member.filter { !inRealTime.contains(it) }
+                         val toAdd = inRealTime.filter { !member.contains(it) }
+
+                         member.removeAll(toRemove)
+                         member.addAll(toAdd)
                      }
                 }
         }

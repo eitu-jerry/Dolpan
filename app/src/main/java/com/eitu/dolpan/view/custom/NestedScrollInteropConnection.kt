@@ -113,7 +113,7 @@ internal class MyNestedScrollInteropConnection @OptIn(ExperimentalMaterialApi::c
         }
 
         val delta = available.y
-        Log.d("onPreFling", "${delta}")
+        //Log.d("onPreFling", "${delta}")
 
         if (!lazyListState.isScrollInProgress && !lazyListState.canScrollBackward && delta == 0.0f) {
             Log.d("swipe to 0", "called")
@@ -138,7 +138,7 @@ internal class MyNestedScrollInteropConnection @OptIn(ExperimentalMaterialApi::c
         }
 
         val delta = result.y
-        Log.d("onPostFling", "${delta}")
+        //Log.d("onPostFling", "${delta}")
 
         interruptOngoingScrolls()
 

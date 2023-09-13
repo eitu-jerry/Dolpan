@@ -8,12 +8,12 @@ plugins {
 
 android {
     namespace 'com.eitu.dolpan'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.eitu.dolpan"
         minSdk 26
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -164,6 +164,12 @@ dependencies {
     implementation("io.socket:socket.io-client:2.1.0")
 
     implementation "jp.wasabeef:blurry:4.0.1"
+
+    //navigation
+    implementation "androidx.navigation:navigation-runtime-ktx:2.7.1"
+    implementation "androidx.navigation:navigation-fragment-ktx:2.7.1"
+    implementation "androidx.navigation:navigation-ui-ktx:2.7.1"
+
 }
 
 // Allow references to generated code

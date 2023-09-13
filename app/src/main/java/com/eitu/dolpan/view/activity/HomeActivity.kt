@@ -6,13 +6,16 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.eitu.dolpan.adapter.AdapterFragment
 import com.eitu.dolpan.databinding.ActivityHomeBinding
 import com.eitu.dolpan.view.dialog.DialogMemberSelected
 import com.eitu.dolpan.viewModel.MemberSelected
 import com.eitu.dolpan.view.base.BaseActivity
+import com.eitu.dolpan.viewModel.HomeAct
 import com.eitu.dolpan.viewModel.WriteArticle
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,6 +38,16 @@ class HomeActivity : BaseActivity() {
 
     private val memberSelected : MemberSelected by viewModels()
     private val writeArticle : WriteArticle by viewModels()
+    private val homeAct : HomeAct by viewModels()
+
+    override fun callWhenBack() {
+        if (binding.fragmentPager.currentItem != 0) {
+            binding.fragmentPager.setCurrentItem(0, true)
+        }
+        else {
+            super.callWhenBack()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,11 +66,35 @@ class HomeActivity : BaseActivity() {
 
     private fun initFragment() {
         binding.fragmentPager.apply {
-            isUserInputEnabled = false
+            isUserInputEnabled = true
             adapter = adapterFragment
 
             val viewRecycler = getChildAt(0) as RecyclerView
             viewRecycler.setItemViewCacheSize(adapterFragment.itemCount)
+        }
+
+        binding.fragmentPager.registerOnPageChangeCallback(object : OnPageChangeCallback() {
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels)
+            }
+
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                Log.d("pageSelected", "page $position")
+            }
+
+            override fun onPageScrollStateChanged(state: Int) {
+                super.onPageScrollStateChanged(state)
+            }
+        })
+
+        homeAct.page.observe(this) {
+            Toast.makeText(this, "page $it", Toast.LENGTH_SHORT).show()
+            binding.fragmentPager.setCurrentItem(it, false)
         }
 
         TabLayoutMediator(
