@@ -170,6 +170,10 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:2.7.1"
     implementation "androidx.navigation:navigation-ui-ktx:2.7.1"
 
+    implementation "com.github.skydoves:cloudy:0.1.2"
+
+    implementation 'com.github.jakhongirmadaminov:glassmorphic-composables:0.0.4'
+
 }
 
 // Allow references to generated code

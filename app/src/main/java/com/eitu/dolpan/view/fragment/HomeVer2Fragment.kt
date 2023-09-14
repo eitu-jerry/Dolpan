@@ -47,6 +47,7 @@ import com.eitu.dolpan.view.base.BaseFragment
 import com.eitu.dolpan.view.custom.rememberMyNestedScrollInteropConnection
 import com.eitu.dolpan.viewModel.HomeAct
 import com.eitu.dolpan.viewModel.HomeItems
+import com.skydoves.cloudy.Cloudy
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -201,7 +202,6 @@ class HomeVer2Fragment : BaseFragment() {
                 )
             }
             else {
-
                 LazyColumn(
                     state = memberLazyListState,
                     verticalArrangement = Arrangement.spacedBy(15.dp),
@@ -212,7 +212,6 @@ class HomeVer2Fragment : BaseFragment() {
                         .padding(bottom = dimensionResource(id = R.dimen.appBottomHeight))
                         .nestedScroll(memberNested)
                 ) {
-
                     items(homeItems.member) {
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(15.dp),
@@ -254,15 +253,11 @@ class HomeVer2Fragment : BaseFragment() {
                             derivedStateOf {
                                 if (lazyListState.layoutInfo.visibleItemsInfo.size < 3)
                                     return@derivedStateOf 1f
-
                                 val currentItemInfo = lazyListState.layoutInfo.visibleItemsInfo
                                     .firstOrNull { it.index == index }
                                     ?: return@derivedStateOf 0.5f
-
                                 val itemHalfSize = currentItemInfo.size / 2
-
                                 if (currentItemInfo.offset + itemHalfSize < startFolding) return@derivedStateOf 1f
-
                                 (1f - minOf(1f, abs(currentItemInfo.offset + itemHalfSize - startFolding).toFloat() / startFolding) * 0.4f)
                             }
                         }
@@ -271,15 +266,11 @@ class HomeVer2Fragment : BaseFragment() {
                             derivedStateOf {
                                 if (lazyListState.layoutInfo.visibleItemsInfo.size < 3)
                                     return@derivedStateOf 0f
-
                                 val currentItemInfo = lazyListState.layoutInfo.visibleItemsInfo
                                     .firstOrNull { it.index == index }
                                     ?: return@derivedStateOf 0f
-
                                 val itemHalfSize = currentItemInfo.size / 2
-
                                 if (currentItemInfo.offset + itemHalfSize < startFolding) return@derivedStateOf 0f
-
                                 currentItemInfo.size * (1 - opacity.pow(3.5f))
                             }
                         }
