@@ -19,17 +19,22 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.*
+import androidx.compose.ui.zIndex
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -46,6 +51,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.abs
+import kotlin.math.pow
 import kotlin.math.roundToInt
 
 @AndroidEntryPoint
@@ -77,9 +84,10 @@ class HomeVer2Fragment : BaseFragment() {
         Pair("vichan", "비챤"),
     )
 
+    var isShow = mutableStateOf(true)
+
     @OptIn(ExperimentalGlideComposeApi::class)
     override fun init() {
-        var isShow = true
         var scrollRange = -1
 
         binding.apply {
@@ -94,12 +102,14 @@ class HomeVer2Fragment : BaseFragment() {
                     binding.collapsingToolBar.title = "Title Collapse"
                     binding.collapsingToolBar.alpha = 0f
                     binding.collapsingToolBar.animate().alpha(1f).setDuration(300).start()
-                    isShow = true
+                    isShow.value = true
+                    binding.coordinator.setPadding(0,0,0,0)
                 }
-                else if (isShow) {
+                else if (isShow.value) {
                     //careful there should a space between double quote otherwise it wont work
                     binding.collapsingToolBar.title = " "
-                    isShow = false
+                    isShow.value = false
+                    binding.coordinator.setPadding(0,0,0, resources.getDimensionPixelOffset(R.dimen.appBottomHeight))
                 }
             }
 
@@ -133,7 +143,6 @@ class HomeVer2Fragment : BaseFragment() {
     @Composable
     private fun App() {
 
-        val scrollState = rememberScrollState()
         val columnSize = resources.displayMetrics.heightPixels - appBarHeight
         val swipeableState = rememberSwipeableState(initialValue = 0)
         val anchors = mapOf(0f to 0, -columnSize to 1)
@@ -144,11 +153,23 @@ class HomeVer2Fragment : BaseFragment() {
             swipeableState = swipeableState
         )
 
-        var canDownTo by remember { mutableStateOf(false) }
+        val memberLazyListState = rememberLazyListState()
+        val memberScrollUp = memberLazyListState.isScrollingUp()
+        val memberScrollDown = memberLazyListState.isScrollingDown()
+        val memberNested = object : NestedScrollConnection {
+            override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
+                Log.d("isScrollingUp", "$memberScrollUp")
+                Log.d("isScrollingDown", "$memberScrollDown")
+                Log.d("canScrollForward", "${memberLazyListState.canScrollForward}")
+                Log.d("onPostFling", "consumed : ${consumed.y}\navaliable : ${available.y}")
+                if (memberScrollDown && !memberLazyListState.canScrollForward && available.y == 0f) {
+                    swipeableState.animateTo(1)
+                }
+                return super.onPostFling(consumed, available)
+            }
+        }
 
-        val coroutineScope = rememberCoroutineScope()
-
-        Box(
+        BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
                 .swipeable(
@@ -157,7 +178,13 @@ class HomeVer2Fragment : BaseFragment() {
                     thresholds = { _, _ -> FractionalThreshold(0.3f) },
                     orientation = Orientation.Vertical
                 )
+
         ) {
+
+            val startFolding = constraints.maxHeight / 18 * 13
+            val bottomPadding = constraints.maxHeight - startFolding
+
+            fun toDp(pixel : Float) : Dp = (pixel / resources.displayMetrics.density).dp
 
             if (homeItems.member.isEmpty()) {
                 Text(
@@ -174,40 +201,19 @@ class HomeVer2Fragment : BaseFragment() {
                 )
             }
             else {
-                Column(
+
+                LazyColumn(
+                    state = memberLazyListState,
                     verticalArrangement = Arrangement.spacedBy(15.dp),
+                    contentPadding = PaddingValues(top = 50.dp, bottom = 180.dp),
                     modifier = Modifier
                         .height(Dp(columnSize))
-                        .verticalScroll(
-                            scrollState,
-                            flingBehavior = remember {
-                                object : FlingBehavior {
-                                    override suspend fun ScrollScope.performFling(
-                                        initialVelocity: Float
-                                    ): Float {
-                                        Log.d("performFling", "$initialVelocity")
-                                        if (scrollState.canScrollForward) {
-                                            canDownTo = false
-                                            scrollState.animateScrollBy(initialVelocity)
-                                        } else if (initialVelocity >= 0) {
-                                            coroutineScope.launch(Dispatchers.Default) {
-                                                delay(100)
-                                                canDownTo = true
-                                            }
-                                            if (canDownTo) {
-                                                swipeableState.animateTo(1)
-                                            }
-                                        }
-                                        return initialVelocity
-                                    }
-                                }
-                            }
-                        )
                         .offset { IntOffset(0, swipeableState.offset.value.roundToInt()) }
-                        .padding(top = 50.dp, bottom = 250.dp)
+                        .padding(bottom = dimensionResource(id = R.dimen.appBottomHeight))
+                        .nestedScroll(memberNested)
                 ) {
 
-                    homeItems.member.forEach {
+                    items(homeItems.member) {
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(15.dp),
                             modifier = Modifier
@@ -227,33 +233,64 @@ class HomeVer2Fragment : BaseFragment() {
                 }
             }
 
-            LazyColumn(
-                state = lazyListState,
-                verticalArrangement = Arrangement.spacedBy(15.dp),
-                contentPadding = PaddingValues(bottom = 15.dp),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .nestedScroll(nestedScroll)
-                    .offset {
-                        IntOffset(
-                            0,
-                            (swipeableState.offset.value + columnSize).roundToInt()
+            if (homeItems.list.isNotEmpty()) {
+                LazyColumn(
+                    state = lazyListState,
+                    verticalArrangement = Arrangement.spacedBy(15.dp),
+                    contentPadding = PaddingValues(bottom = toDp(bottomPadding.toFloat())),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .nestedScroll(nestedScroll)
+                        .offset {
+                            IntOffset(
+                                0,
+                                (swipeableState.offset.value + columnSize).roundToInt()
+                            )
+                        }
+                ) {
+                    itemsIndexed(homeItems.list, key = { position, _ -> position }) {index, it ->
+
+                        val opacity by remember {
+                            derivedStateOf {
+                                if (lazyListState.layoutInfo.visibleItemsInfo.size < 3)
+                                    return@derivedStateOf 1f
+
+                                val currentItemInfo = lazyListState.layoutInfo.visibleItemsInfo
+                                    .firstOrNull { it.index == index }
+                                    ?: return@derivedStateOf 0.5f
+
+                                val itemHalfSize = currentItemInfo.size / 2
+
+                                if (currentItemInfo.offset + itemHalfSize < startFolding) return@derivedStateOf 1f
+
+                                (1f - minOf(1f, abs(currentItemInfo.offset + itemHalfSize - startFolding).toFloat() / startFolding) * 0.4f)
+                            }
+                        }
+
+                        val translateY by remember {
+                            derivedStateOf {
+                                if (lazyListState.layoutInfo.visibleItemsInfo.size < 3)
+                                    return@derivedStateOf 0f
+
+                                val currentItemInfo = lazyListState.layoutInfo.visibleItemsInfo
+                                    .firstOrNull { it.index == index }
+                                    ?: return@derivedStateOf 0f
+
+                                val itemHalfSize = currentItemInfo.size / 2
+
+                                if (currentItemInfo.offset + itemHalfSize < startFolding) return@derivedStateOf 0f
+
+                                currentItemInfo.size * (1 - opacity.pow(3.5f))
+                            }
+                        }
+
+                        Item(
+                            it = it,
+                            opacity = opacity,
+                            translateY = translateY,
+                            index = index
                         )
                     }
-            ) {
-                itemsIndexed(homeItems.list, key = { position, _ -> position }) {position, it ->
-                    Item(
-                        it = it,
-                        enterTransition =
-                        if (lazyListState.isScrollingUp()) {
-                            scaleIn(initialScale = 1f)
-                        }
-                        else {
-                            scaleIn(
-                                initialScale = 0.7f
-                            ) + fadeIn()
-                        }
-                    )
                 }
             }
 
@@ -295,91 +332,95 @@ class HomeVer2Fragment : BaseFragment() {
 
     @OptIn(ExperimentalGlideComposeApi::class)
     @Composable
-    private fun Item(it : Chat, modifier: Modifier = Modifier, enterTransition: EnterTransition) {
+    private fun Item(
+        it : Chat,
+        modifier: Modifier = Modifier,
+        opacity : Float,
+        translateY : Float,
+        index : Int
+    ) {
 
-        var visible by remember { mutableStateOf(false) }
+        Box(modifier = modifier
+            .offset(y = -Dp(translateY))
+            .graphicsLayer(
+                translationY = -(translateY),
+                alpha = opacity.pow((1 - opacity) * 100)
+            )
+            .scale(Math.max(0.7f, opacity))
+            .zIndex(-index.toFloat())
 
-        AnimatedVisibility(
-            visible = visible,
-            enter = enterTransition
         ) {
-            Box(modifier = modifier) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(15.dp),
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(15.dp),
+                modifier = Modifier
+                    .padding(start = 15.dp, end = 15.dp)
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .defaultMinSize(minHeight = 70.dp)
+                    .background(
+                        color = colorResource(id = R.color.stackBackground),
+                        shape = RoundedCornerShape(20.dp)
+                    )
+                    .padding(15.dp)
+            ) {
+                GlideImage(
+                    model = if (it.type == "twitchChat") R.drawable.icon_twitch_192
+                    else R.drawable.icon_cafe,
+                    contentDescription = "asdf",
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .padding(start = 15.dp, end = 15.dp)
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .defaultMinSize(minHeight = 70.dp)
+                        .width(40.dp)
+                        .height(40.dp)
                         .background(
                             color = colorResource(id = R.color.stackBackground),
-                            shape = RoundedCornerShape(20.dp)
+                            shape = RoundedCornerShape(10.dp)
                         )
-                        .padding(15.dp)
-                ) {
-                    GlideImage(
-                        model = if (it.type == "twitchChat") R.drawable.icon_twitch_192
-                            else R.drawable.icon_cafe,
-                        contentDescription = "asdf",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .width(40.dp)
-                            .height(40.dp)
-                            .background(
-                                color = colorResource(id = R.color.stackBackground),
-                                shape = RoundedCornerShape(10.dp)
-                            )
-                            .clip(RoundedCornerShape(10.dp))
-                            .align(Alignment.CenterVertically)
-                    )
-                    Column() {
-                        Row() {
-                            Text(
-                                text =
-                                if (it.type == "twitchChat") {
-                                    if (it.sendFrom == null) {
-                                        ownerMap[it.owner] ?: "모시깽"
-                                    }
-                                    else {
-                                        ownerMap[it.sendFrom] ?: "모시깽"
-                                    }
-                                }
-                                else {
-                                    ownerMap[it.owner] ?: "모시깽"
-                                },
-                                fontWeight = FontWeight(500),
-                                fontSize = 14.sp
-                            )
-                            Spacer(modifier = Modifier.weight(1f))
-                            Text(
-                                text = it.formatWriteDate(),
-                                fontSize = 12.sp,
-                                color = colorResource(id = R.color.textLightGray),
-                                modifier = Modifier.align(Alignment.CenterVertically)
-                            )
-                        }
+                        .clip(RoundedCornerShape(10.dp))
+                        .align(Alignment.CenterVertically)
+                )
+                Column() {
+                    Row() {
                         Text(
-                            text = if (it.type == "twitchChat") {
+                            text =
+                            if (it.type == "twitchChat") {
                                 if (it.sendFrom == null) {
-                                    it.title
+                                    ownerMap[it.owner] ?: "모시깽"
                                 }
                                 else {
-                                    "To ${ownerMap[it.owner]}. ${it.title}"
+                                    ownerMap[it.sendFrom] ?: "모시깽"
                                 }
                             }
                             else {
-                                it.title
+                                ownerMap[it.owner] ?: "모시깽"
                             },
-                            fontWeight = FontWeight(400),
-                            fontSize = 13.sp
+                            fontWeight = FontWeight(500),
+                            fontSize = 14.sp
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Text(
+                            text = it.formatWriteDate(),
+                            fontSize = 12.sp,
+                            color = colorResource(id = R.color.textLightGray),
+                            modifier = Modifier.align(Alignment.CenterVertically)
                         )
                     }
+                    Text(
+                        text = if (it.type == "twitchChat") {
+                            if (it.sendFrom == null) {
+                                it.title
+                            }
+                            else {
+                                "To ${ownerMap[it.owner]}. ${it.title}"
+                            }
+                        }
+                        else {
+                            it.title
+                        },
+                        fontWeight = FontWeight(400),
+                        fontSize = 13.sp
+                    )
                 }
             }
-        }
-
-        LaunchedEffect(Unit) {
-            visible = true
         }
 
     }
@@ -387,33 +428,37 @@ class HomeVer2Fragment : BaseFragment() {
     @OptIn(ExperimentalGlideComposeApi::class, ExperimentalFoundationApi::class)
     @Composable
     private fun AppBottom() {
-        Box(modifier = Modifier) {
+        Box(modifier = Modifier.padding(30.dp)) {
             GlideImage(
                 model = R.drawable.button_write,
                 contentDescription = "",
-                modifier = Modifier.align(Alignment.CenterStart).combinedClickable(
-                    interactionSource = MutableInteractionSource(),
-                    indication = null,
-                    onLongClick = {
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .combinedClickable(
+                        interactionSource = MutableInteractionSource(),
+                        indication = null,
+                        onLongClick = {
 
-                    },
-                    onClick = {
+                        },
+                        onClick = {
 
-                    }
-                ))
+                        }
+                    ))
             GlideImage(
                 model = R.drawable.button_write,
                 contentDescription = "",
-                modifier = Modifier.align(Alignment.CenterEnd).combinedClickable(
-                    interactionSource = MutableInteractionSource(),
-                    indication = null,
-                    onLongClick = {
-                        homeAct.page.value = 2
-                    },
-                    onClick = {
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .combinedClickable(
+                        interactionSource = MutableInteractionSource(),
+                        indication = null,
+                        onLongClick = {
+                            homeAct.page.value = 2
+                        },
+                        onClick = {
 
-                    }
-                ))
+                        }
+                    ))
         }
     }
 
@@ -427,6 +472,25 @@ class HomeVer2Fragment : BaseFragment() {
                     previousIndex > firstVisibleItemIndex
                 } else {
                     previousScrollOffset >= firstVisibleItemScrollOffset
+                }.also {
+                    previousIndex = firstVisibleItemIndex
+                    previousScrollOffset = firstVisibleItemScrollOffset
+                }
+            }
+        }.value
+    }
+
+    @Composable
+    private fun LazyListState.isScrollingDown(): Boolean {
+        var previousIndex by remember(this) { mutableStateOf(firstVisibleItemIndex) }
+        var previousScrollOffset by remember(this) { mutableStateOf(firstVisibleItemScrollOffset) }
+        return remember(this) {
+            derivedStateOf {
+                if (previousIndex != firstVisibleItemIndex) {
+                    previousIndex < firstVisibleItemIndex
+                }
+                else {
+                    previousScrollOffset <= firstVisibleItemScrollOffset
                 }.also {
                     previousIndex = firstVisibleItemIndex
                     previousScrollOffset = firstVisibleItemScrollOffset

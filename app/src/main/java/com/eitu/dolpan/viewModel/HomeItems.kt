@@ -40,7 +40,7 @@ class HomeItems @Inject constructor(val fdb : FirebaseFirestore) : ViewModel() {
         viewModelScope.launch {
             val result = fdb.collection("item")
                 .orderBy("date", Query.Direction.DESCENDING)
-                .limit(10)
+                .limit(30)
                 .get()
                 .asDeferred()
 

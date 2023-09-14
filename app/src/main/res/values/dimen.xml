@@ -6,7 +6,7 @@
     <dimen name="homeMemberPadding">@dimen/sidePadding</dimen>
 
     <!--HomeVer2Fragment-->
-    <dimen name="appBottomHeight">80dp</dimen>
+    <dimen name="appBottomHeight">100dp</dimen>
 
     <!--RewindFragment-->
     <dimen name="reFragTopName">25sp</dimen>
