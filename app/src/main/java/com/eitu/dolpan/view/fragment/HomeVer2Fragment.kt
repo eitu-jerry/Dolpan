@@ -11,28 +11,23 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.FractionalThreshold
-import androidx.compose.material.rememberSwipeableState
-import androidx.compose.material.swipeable
+import androidx.compose.material.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.zIndex
 import androidx.fragment.app.activityViewModels
@@ -47,11 +42,7 @@ import com.eitu.dolpan.view.base.BaseFragment
 import com.eitu.dolpan.view.custom.rememberMyNestedScrollInteropConnection
 import com.eitu.dolpan.viewModel.HomeAct
 import com.eitu.dolpan.viewModel.HomeItems
-import com.skydoves.cloudy.Cloudy
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.roundToInt
@@ -140,19 +131,78 @@ class HomeVer2Fragment : BaseFragment() {
         TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 250f, resources.displayMetrics)
     }
 
-    @OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
+    private fun toDp(pixel : Float) : Dp = (pixel / resources.displayMetrics.density).dp
+    private fun toPx(dp : Dp) : Float = (dp.value * resources.displayMetrics.density)
+
+    @OptIn(ExperimentalMaterialApi::class)
     @Composable
     private fun App() {
 
-        val columnSize = resources.displayMetrics.heightPixels - appBarHeight
+        val columnSize = resources.displayMetrics.heightPixels - appBarHeight - toPx(dimensionResource(id = R.dimen.appBottomHeight))
         val swipeableState = rememberSwipeableState(initialValue = 0)
         val anchors = mapOf(0f to 0, -columnSize to 1)
 
-        val lazyListState = rememberLazyListState()
-        val nestedScroll = rememberMyNestedScrollInteropConnection(
-            lazyListState = lazyListState,
-            swipeableState = swipeableState
-        )
+        BoxWithConstraints(
+            modifier = Modifier
+                .fillMaxSize()
+                .swipeable(
+                    state = swipeableState,
+                    anchors = anchors,
+                    thresholds = { _, _ -> FractionalThreshold(0.3f) },
+                    orientation = Orientation.Vertical
+                )
+
+        ) {
+
+            val startFolding = (constraints.maxHeight / 18 * 13).toFloat()
+            val bottomPadding = (constraints.maxHeight - startFolding).toFloat()
+
+            val startFoldingMember = columnSize - toPx(70.dp)
+            val bottomPaddingMember = toPx(70.dp) * 2
+
+            if (homeItems.member.isEmpty()) {
+                Text(
+                    text = "뱅없",
+                    color = Color.White,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .offset {
+                            IntOffset(
+                                0,
+                                (swipeableState.offset.value).roundToInt()
+                            )
+                        }
+                )
+            }
+            else {
+                LiveMemberList(
+                    swipeableState = swipeableState,
+                    columnSize = columnSize,
+                    startFoldingY = startFoldingMember,
+                    bottomPadding = bottomPaddingMember
+                )
+            }
+
+            if (homeItems.list.isNotEmpty()) {
+                NotificationList(
+                    swipeableState = swipeableState,
+                    columnSize = columnSize,
+                    startFolding = startFolding,
+                    bottomPadding = bottomPadding
+                )
+            }
+
+        }
+    }
+
+    @OptIn(ExperimentalMaterialApi::class)
+    @Composable
+    private fun LiveMemberList(
+        swipeableState : SwipeableState<Int>,
+        columnSize : Float,
+        startFoldingY : Float,
+        bottomPadding : Float
+    ) {
 
         val memberLazyListState = rememberLazyListState()
         val memberScrollUp = memberLazyListState.isScrollingUp()
@@ -170,134 +220,65 @@ class HomeVer2Fragment : BaseFragment() {
             }
         }
 
-        BoxWithConstraints(
+        LazyColumn(
+            state = memberLazyListState,
+            verticalArrangement = Arrangement.spacedBy(15.dp),
+            contentPadding = PaddingValues(top = 0.dp, bottom = toDp(bottomPadding)),
             modifier = Modifier
-                .fillMaxSize()
-                .swipeable(
-                    state = swipeableState,
-                    anchors = anchors,
-                    thresholds = { _, _ -> FractionalThreshold(0.3f) },
-                    orientation = Orientation.Vertical
-                )
-
+                .height(Dp(columnSize))
+                .offset { IntOffset(0, swipeableState.offset.value.roundToInt()) }
+                .padding(bottom = dimensionResource(id = R.dimen.appBottomHeight))
+                .nestedScroll(memberNested)
         ) {
 
-            val startFolding = constraints.maxHeight / 18 * 13
-            val bottomPadding = constraints.maxHeight - startFolding
+            itemsIndexed(homeItems.member) { index, it ->
 
-            fun toDp(pixel : Float) : Dp = (pixel / resources.displayMetrics.density).dp
-
-            if (homeItems.member.isEmpty()) {
-                Text(
-                    text = "뱅없",
-                    color = Color.White,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .offset {
-                            IntOffset(
-                                0,
-                                (swipeableState.offset.value).roundToInt()
-                            )
-                        }
-                )
-            }
-            else {
-                LazyColumn(
-                    state = memberLazyListState,
-                    verticalArrangement = Arrangement.spacedBy(15.dp),
-                    contentPadding = PaddingValues(top = 50.dp, bottom = 180.dp),
-                    modifier = Modifier
-                        .height(Dp(columnSize))
-                        .offset { IntOffset(0, swipeableState.offset.value.roundToInt()) }
-                        .padding(bottom = dimensionResource(id = R.dimen.appBottomHeight))
-                        .nestedScroll(memberNested)
-                ) {
-                    items(homeItems.member) {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(15.dp),
-                            modifier = Modifier
-                                .padding(start = 15.dp, end = 15.dp)
-                                .fillMaxWidth()
-                                .height(80.dp)
-                                .defaultMinSize(minHeight = 70.dp)
-                                .background(
-                                    color = colorResource(id = R.color.stackBackground),
-                                    shape = RoundedCornerShape(20.dp)
-                                )
-                                .padding(15.dp)
-                        ) {
-                            Text(text = "${it.name}")
-                        }
+                val opacity by remember {
+                    derivedStateOf {
+                        if (memberLazyListState.layoutInfo.visibleItemsInfo.size < 3)
+                            return@derivedStateOf 1f
+                        val currentItemInfo = memberLazyListState.layoutInfo.visibleItemsInfo
+                            .firstOrNull { it.index == index }
+                            ?: return@derivedStateOf 0.5f
+                        val itemHalfSize = currentItemInfo.size / 2
+                        if (currentItemInfo.offset + itemHalfSize < startFoldingY) return@derivedStateOf 1f
+                        (1f - minOf(1f, abs(currentItemInfo.offset + itemHalfSize - startFoldingY) / startFoldingY) * 0.4f)
                     }
                 }
-            }
 
-            if (homeItems.list.isNotEmpty()) {
-                LazyColumn(
-                    state = lazyListState,
-                    verticalArrangement = Arrangement.spacedBy(15.dp),
-                    contentPadding = PaddingValues(bottom = toDp(bottomPadding.toFloat())),
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .nestedScroll(nestedScroll)
-                        .offset {
-                            IntOffset(
-                                0,
-                                (swipeableState.offset.value + columnSize).roundToInt()
-                            )
-                        }
-                ) {
-                    itemsIndexed(homeItems.list, key = { position, _ -> position }) {index, it ->
-
-                        val opacity by remember {
-                            derivedStateOf {
-                                if (lazyListState.layoutInfo.visibleItemsInfo.size < 3)
-                                    return@derivedStateOf 1f
-                                val currentItemInfo = lazyListState.layoutInfo.visibleItemsInfo
-                                    .firstOrNull { it.index == index }
-                                    ?: return@derivedStateOf 0.5f
-                                val itemHalfSize = currentItemInfo.size / 2
-                                if (currentItemInfo.offset + itemHalfSize < startFolding) return@derivedStateOf 1f
-                                (1f - minOf(1f, abs(currentItemInfo.offset + itemHalfSize - startFolding).toFloat() / startFolding) * 0.4f)
-                            }
-                        }
-
-                        val translateY by remember {
-                            derivedStateOf {
-                                if (lazyListState.layoutInfo.visibleItemsInfo.size < 3)
-                                    return@derivedStateOf 0f
-                                val currentItemInfo = lazyListState.layoutInfo.visibleItemsInfo
-                                    .firstOrNull { it.index == index }
-                                    ?: return@derivedStateOf 0f
-                                val itemHalfSize = currentItemInfo.size / 2
-                                if (currentItemInfo.offset + itemHalfSize < startFolding) return@derivedStateOf 0f
-                                currentItemInfo.size * (1 - opacity.pow(3.5f))
-                            }
-                        }
-
-                        Item(
-                            it = it,
-                            opacity = opacity,
-                            translateY = translateY,
-                            index = index
-                        )
+                val translateY by remember {
+                    derivedStateOf {
+                        if (memberLazyListState.layoutInfo.visibleItemsInfo.size < 3)
+                            return@derivedStateOf 0f
+                        val currentItemInfo = memberLazyListState.layoutInfo.visibleItemsInfo
+                            .firstOrNull { it.index == index }
+                            ?: return@derivedStateOf 0f
+                        val itemHalfSize = currentItemInfo.size / 2
+                        if (currentItemInfo.offset + itemHalfSize < startFoldingY) return@derivedStateOf 0f
+                        toPx(80.dp) * (1 - opacity)
                     }
                 }
-            }
 
+                ItemMember(it = it, opacity = opacity, translateY = translateY)
+            }
         }
     }
 
-    @OptIn(ExperimentalAnimationApi::class)
     @Composable
-    private fun ItemMember(it : YoutubeMember) {
+    private fun ItemMember(
+        it : YoutubeMember,
+        opacity : Float,
+        translateY : Float
+    ) {
 
-        var visible by remember { mutableStateOf(true) }
-
-        AnimatedVisibility(
-            visible = visible,
-            enter = slideInHorizontally() + scaleIn(),
-            exit = slideOutHorizontally() + scaleOut()
+        Box(
+            modifier = Modifier
+                .offset(y = -Dp(translateY))
+                .graphicsLayer(
+                    translationY = -(translateY),
+                    alpha = opacity.pow((1 - opacity) * 100)
+                )
+                .scale(opacity)
         ) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(15.dp),
@@ -305,19 +286,83 @@ class HomeVer2Fragment : BaseFragment() {
                     .padding(start = 15.dp, end = 15.dp)
                     .fillMaxWidth()
                     .height(80.dp)
-                    .defaultMinSize(minHeight = 70.dp)
                     .background(
                         color = colorResource(id = R.color.stackBackground),
                         shape = RoundedCornerShape(20.dp)
                     )
                     .padding(15.dp)
+
             ) {
                 Text(text = "${it.name}")
             }
         }
-        
-        LaunchedEffect(key1 = 0) {
-            visible = true
+    }
+
+    @OptIn(ExperimentalMaterialApi::class)
+    @Composable
+    private fun NotificationList(
+        swipeableState: SwipeableState<Int>,
+        columnSize : Float,
+        startFolding: Float,
+        bottomPadding: Float
+    ) {
+
+        val lazyListState = rememberLazyListState()
+        val nestedScroll = rememberMyNestedScrollInteropConnection(
+            lazyListState = lazyListState,
+            swipeableState = swipeableState
+        )
+
+        LazyColumn(
+            state = lazyListState,
+            verticalArrangement = Arrangement.spacedBy(15.dp),
+            contentPadding = PaddingValues(bottom = toDp(bottomPadding.toFloat())),
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .nestedScroll(nestedScroll)
+                .offset {
+                    IntOffset(
+                        0,
+                        (swipeableState.offset.value + columnSize).roundToInt()
+                    )
+                }
+        ) {
+            itemsIndexed(homeItems.list, key = { position, _ -> position }) {index, it ->
+
+                val opacity by remember {
+                    derivedStateOf {
+                        if (lazyListState.layoutInfo.visibleItemsInfo.size < 3)
+                            return@derivedStateOf 1f
+                        val currentItemInfo = lazyListState.layoutInfo.visibleItemsInfo
+                            .firstOrNull { it.index == index }
+                            ?: return@derivedStateOf 0.5f
+                        val itemHalfSize = currentItemInfo.size / 2
+                        if (currentItemInfo.offset + itemHalfSize < startFolding) return@derivedStateOf 1f
+                        (1f - minOf(1f, abs(currentItemInfo.offset + itemHalfSize - startFolding) / startFolding) * 0.4f)
+                    }
+                }
+
+                val translateY by remember {
+                    derivedStateOf {
+                        if (lazyListState.layoutInfo.visibleItemsInfo.size < 3)
+                            return@derivedStateOf 0f
+                        val currentItemInfo = lazyListState.layoutInfo.visibleItemsInfo
+                            .firstOrNull { it.index == index }
+                            ?: return@derivedStateOf 0f
+                        val itemHalfSize = currentItemInfo.size / 2
+                        if (currentItemInfo.offset + itemHalfSize < startFolding) return@derivedStateOf 0f
+                        toPx(70.dp) * (1 - opacity.pow(opacity * 5))
+                    }
+                }
+
+                Item(
+                    it = it,
+                    opacity = opacity,
+                    translateY = translateY,
+                    index = index
+                )
+            }
         }
     }
 
@@ -378,7 +423,7 @@ class HomeVer2Fragment : BaseFragment() {
                                     ownerMap[it.owner] ?: "모시깽"
                                 }
                                 else {
-                                    ownerMap[it.sendFrom] ?: "모시깽"
+                                     "${ownerMap[it.sendFrom]} -> ${ownerMap[it.owner]}"
                                 }
                             }
                             else {
@@ -396,17 +441,7 @@ class HomeVer2Fragment : BaseFragment() {
                         )
                     }
                     Text(
-                        text = if (it.type == "twitchChat") {
-                            if (it.sendFrom == null) {
-                                it.title
-                            }
-                            else {
-                                "To ${ownerMap[it.owner]}. ${it.title}"
-                            }
-                        }
-                        else {
-                            it.title
-                        },
+                        text = it.title,
                         fontWeight = FontWeight(400),
                         fontSize = 13.sp
                     )

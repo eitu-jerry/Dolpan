@@ -38,28 +38,28 @@ fun ArticleItemForActivity(item : Article, activity: BaseActivity) {
             .fillMaxWidth()
             .defaultMinSize(minHeight = 85.dp)
             .wrapContentHeight()
+            .clickable {
+                try {
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.data = Uri.parse("navercafe://cafe/27842958/${item.articleId}")
+                    activity.startActivity(intent)
+                } catch (e: Exception) {
+                    IntentHelper.intentDetail(
+                        activity,
+                        Intent(activity, WebViewActivity::class.java).apply {
+                            putExtra(
+                                "url",
+                                "https://m.cafe.naver.com/ca-fe/web/cafes/steamindiegame/articles/${item.articleId}?useCafeId=false"
+                            )
+                        })
+                }
+            }
             .padding(10.dp)
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(5.dp),
             modifier = Modifier
                 .weight(1f)
-                .clickable {
-                    try {
-                        val intent = Intent(Intent.ACTION_VIEW)
-                        intent.data = Uri.parse("navercafe://cafe/27842958/${item.articleId}")
-                        activity.startActivity(intent)
-                    } catch (e: Exception) {
-                        IntentHelper.intentDetail(
-                            activity,
-                            Intent(activity, WebViewActivity::class.java).apply {
-                                putExtra(
-                                    "url",
-                                    "https://m.cafe.naver.com/ca-fe/web/cafes/steamindiegame/articles/${item.articleId}?useCafeId=false"
-                                )
-                            })
-                    }
-                }
         ) {
             Text(
                 text = getStyledSubject(

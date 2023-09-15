@@ -41,10 +41,19 @@ class HomeItems @Inject constructor(val fdb : FirebaseFirestore) : ViewModel() {
             val result = fdb.collection("item")
                 .orderBy("date", Query.Direction.DESCENDING)
                 .limit(30)
-                .get()
-                .asDeferred()
+                .addSnapshotListener { value, error ->
+                    value?.let {
+                        val realTime = it.toObjects(Chat::class.java)
 
-            list.addAll(result.await().toObjects(Chat::class.java))
+                        val toAdd = realTime.filter { chat -> !list.contains(chat) }
+
+                        list.addAll(toAdd)
+                    }
+                }
+//                .get()
+//                .asDeferred()
+//
+//            list.addAll(result.await().toObjects(Chat::class.java))
         }
 
         viewModelScope.launch {
