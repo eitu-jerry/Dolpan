@@ -25,6 +25,7 @@ class MainActivity : BaseActivity() {
         binding.manageItem.setOnClickListener {
             IntentHelper.intentDetail(this, Intent(this, ManageItemActivity::class.java))
         }
+        IntentHelper.intentDetail(this, Intent(this, WakitchActivity::class.java))
 //        lifecycleScope.launch {
 //            var socket : Socket? = null
 //            try {

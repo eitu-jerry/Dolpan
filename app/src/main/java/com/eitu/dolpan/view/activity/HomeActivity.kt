@@ -71,26 +71,14 @@ class HomeActivity : BaseActivity() {
 
             val viewRecycler = getChildAt(0) as RecyclerView
             viewRecycler.setItemViewCacheSize(adapterFragment.itemCount)
+
+            registerOnPageChangeCallback(object : OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    Log.d("pageSelected", "page $position")
+                }
+            })
         }
-
-        binding.fragmentPager.registerOnPageChangeCallback(object : OnPageChangeCallback() {
-            override fun onPageScrolled(
-                position: Int,
-                positionOffset: Float,
-                positionOffsetPixels: Int
-            ) {
-                super.onPageScrolled(position, positionOffset, positionOffsetPixels)
-            }
-
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                Log.d("pageSelected", "page $position")
-            }
-
-            override fun onPageScrollStateChanged(state: Int) {
-                super.onPageScrollStateChanged(state)
-            }
-        })
 
         homeAct.page.observe(this) {
             Toast.makeText(this, "page $it", Toast.LENGTH_SHORT).show()
@@ -101,7 +89,7 @@ class HomeActivity : BaseActivity() {
             binding.tabLayout,
             binding.fragmentPager,
             false,
-            false
+            true
         ) { tab, position ->
             tab.apply {
                 when(position) {

@@ -38,6 +38,8 @@ import com.eitu.dolpan.R
 import com.eitu.dolpan.dataClass.firestore.Chat
 import com.eitu.dolpan.dataClass.firestore.YoutubeMember
 import com.eitu.dolpan.databinding.FragmentHomeVer2Binding
+import com.eitu.dolpan.etc.IntentHelper
+import com.eitu.dolpan.view.activity.WakitchActivity
 import com.eitu.dolpan.view.base.BaseFragment
 import com.eitu.dolpan.view.custom.rememberMyNestedScrollInteropConnection
 import com.eitu.dolpan.viewModel.HomeAct
@@ -101,7 +103,7 @@ class HomeVer2Fragment : BaseFragment() {
                     //careful there should a space between double quote otherwise it wont work
                     binding.collapsingToolBar.title = " "
                     isShow.value = false
-                    binding.coordinator.setPadding(0,0,0, resources.getDimensionPixelOffset(R.dimen.appBottomHeight))
+                    //binding.coordinator.setPadding(0,0,0, resources.getDimensionPixelOffset(R.dimen.appBottomHeight))
                 }
             }
 
@@ -138,7 +140,7 @@ class HomeVer2Fragment : BaseFragment() {
     @Composable
     private fun App() {
 
-        val columnSize = resources.displayMetrics.heightPixels - appBarHeight - toPx(dimensionResource(id = R.dimen.appBottomHeight))
+        val columnSize = resources.displayMetrics.heightPixels - appBarHeight// - toPx(dimensionResource(id = R.dimen.appBottomHeight))
         val swipeableState = rememberSwipeableState(initialValue = 0)
         val anchors = mapOf(0f to 0, -columnSize to 1)
 
@@ -155,9 +157,9 @@ class HomeVer2Fragment : BaseFragment() {
         ) {
 
             val startFolding = (constraints.maxHeight / 18 * 13).toFloat()
-            val bottomPadding = (constraints.maxHeight - startFolding).toFloat()
+            val bottomPadding = (constraints.maxHeight - startFolding)
 
-            val startFoldingMember = columnSize - toPx(70.dp)
+            val startFoldingMember = columnSize - toPx(70.dp) - toPx(dimensionResource(id = R.dimen.appBottomHeight))
             val bottomPaddingMember = toPx(70.dp) * 2
 
             if (homeItems.member.isEmpty()) {
@@ -213,7 +215,7 @@ class HomeVer2Fragment : BaseFragment() {
                 Log.d("isScrollingDown", "$memberScrollDown")
                 Log.d("canScrollForward", "${memberLazyListState.canScrollForward}")
                 Log.d("onPostFling", "consumed : ${consumed.y}\navaliable : ${available.y}")
-                if (memberScrollDown && !memberLazyListState.canScrollForward && available.y == 0f) {
+                if (!memberLazyListState.isScrollInProgress && memberScrollDown && !memberLazyListState.canScrollForward && available.y == 0f) {
                     swipeableState.animateTo(1)
                 }
                 return super.onPostFling(consumed, available)
@@ -225,9 +227,9 @@ class HomeVer2Fragment : BaseFragment() {
             verticalArrangement = Arrangement.spacedBy(15.dp),
             contentPadding = PaddingValues(top = 0.dp, bottom = toDp(bottomPadding)),
             modifier = Modifier
-                .height(Dp(columnSize))
+                .height(toDp(columnSize))
                 .offset { IntOffset(0, swipeableState.offset.value.roundToInt()) }
-                .padding(bottom = dimensionResource(id = R.dimen.appBottomHeight))
+                //.padding(bottom = dimensionResource(id = R.dimen.appBottomHeight))
                 .nestedScroll(memberNested)
         ) {
 
@@ -376,6 +378,8 @@ class HomeVer2Fragment : BaseFragment() {
         index : Int
     ) {
 
+        val type = it.type
+
         Box(modifier = modifier
             .offset(y = -Dp(translateY))
             .graphicsLayer(
@@ -398,6 +402,11 @@ class HomeVer2Fragment : BaseFragment() {
                         shape = RoundedCornerShape(20.dp)
                     )
                     .padding(15.dp)
+                    .clickable {
+                        if (it.type == "twitchChat") {
+                            IntentHelper.intentDetail(requireActivity(), WakitchActivity::class.java)
+                        }
+                    }
             ) {
                 GlideImage(
                     model = if (it.type == "twitchChat") R.drawable.icon_twitch_192
