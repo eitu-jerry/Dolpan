@@ -3,13 +3,14 @@ package com.eitu.dolpan.view.activity
 import android.os.Bundle
 import android.view.View
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,8 +23,12 @@ import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.eitu.dolpan.R
+import com.eitu.dolpan.dataClass.firestore.YoutubeMember
 import com.eitu.dolpan.view.base.BaseActivity
+import com.eitu.dolpan.viewModel.MemberTwitch
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class WakitchActivity : BaseActivity() {
 
     override fun setBinding(): View? = null
@@ -32,8 +37,11 @@ class WakitchActivity : BaseActivity() {
 
     private val owner : String by lazy { intent.getStringExtra("owner") ?: "wak" }
 
+    private val memberModel : MemberTwitch by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        memberModel.setOwner(owner)
         setContent {
             App()
         }
@@ -42,8 +50,10 @@ class WakitchActivity : BaseActivity() {
     @Composable
     private fun App() {
 
+        val member = memberModel.memberState()
+
         Column {
-            Twitch()
+            Twitch(member)
             Chat()
         }
 
@@ -51,7 +61,10 @@ class WakitchActivity : BaseActivity() {
 
     @OptIn(ExperimentalGlideComposeApi::class)
     @Composable
-    private fun Twitch() {
+    private fun Twitch(member : State<YoutubeMember?>) {
+
+        val isLive by remember { mutableStateOf(false) }
+
         Column(modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()) {
@@ -63,6 +76,24 @@ class WakitchActivity : BaseActivity() {
                         .fillMaxWidth()
                         .aspectRatio(16 / 9f)
                 )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    modifier = Modifier.align(Alignment.BottomStart).padding(10.dp)
+                ) {
+                    if (isLive) {
+                        Box(modifier = Modifier
+                            .size(10.dp)
+                            .background(color = Color.Red, shape = CircleShape))
+                    }
+                    else {
+                        Box(modifier = Modifier
+                            .size(10.dp)
+                            .background(color = Color.Gray, shape = CircleShape)
+                            .align(Alignment.CenterVertically)
+                        )
+                        Text(text = "오프라인")
+                    }
+                }
             }
             Row(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
