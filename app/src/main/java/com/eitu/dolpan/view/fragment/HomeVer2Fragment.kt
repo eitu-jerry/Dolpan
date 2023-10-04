@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
@@ -120,7 +121,10 @@ class HomeVer2Fragment : BaseFragment() {
             }
             app.apply {
                 lifecycleOwner = this@HomeVer2Fragment
-                setContent { App() }
+                setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+                setContent {
+                    App()
+                }
             }
             appBottom.apply {
                 lifecycleOwner = this@HomeVer2Fragment
