@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.core.content.edit
 import com.eitu.dolpan.dataClass.firestore.Chat
 import com.eitu.dolpan.dataClass.twitch.chat.request.TwitchChatPayload
-import com.eitu.dolpan.dataClass.twitch.chat.response.TwitchChatMessage
 import com.eitu.dolpan.network.DolpanResult
 import com.eitu.dolpan.network.api.*
 import com.eitu.dolpan.network.returnResult

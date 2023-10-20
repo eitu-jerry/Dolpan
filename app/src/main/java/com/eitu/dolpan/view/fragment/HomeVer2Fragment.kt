@@ -21,14 +21,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.zIndex
 import androidx.fragment.app.activityViewModels
@@ -148,6 +149,9 @@ class HomeVer2Fragment : BaseFragment() {
         val swipeableState = rememberSwipeableState(initialValue = 0)
         val anchors = mapOf(0f to 0, -columnSize to 1)
 
+        val twitchIcon = painterResource(id = R.drawable.icon_twitch_192)
+        val naverCafeIcon = painterResource(id = R.drawable.icon_cafe)
+
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
@@ -194,7 +198,9 @@ class HomeVer2Fragment : BaseFragment() {
                     swipeableState = swipeableState,
                     columnSize = columnSize,
                     startFolding = startFolding,
-                    bottomPadding = bottomPadding
+                    bottomPadding = bottomPadding,
+                    twitchIcon = twitchIcon,
+                    naverCafeIcon = naverCafeIcon
                 )
             }
 
@@ -310,7 +316,9 @@ class HomeVer2Fragment : BaseFragment() {
         swipeableState: SwipeableState<Int>,
         columnSize : Float,
         startFolding: Float,
-        bottomPadding: Float
+        bottomPadding: Float,
+        twitchIcon : Painter,
+        naverCafeIcon : Painter
     ) {
 
         val lazyListState = rememberLazyListState()
@@ -364,9 +372,11 @@ class HomeVer2Fragment : BaseFragment() {
 
                 Item(
                     it = it,
+                    index = index,
                     opacity = opacity,
                     translateY = translateY,
-                    index = index
+                    twitchIcon = twitchIcon,
+                    naverCafeIcon = naverCafeIcon
                 )
             }
         }
@@ -376,10 +386,12 @@ class HomeVer2Fragment : BaseFragment() {
     @Composable
     private fun Item(
         it : Chat,
-        modifier: Modifier = Modifier,
+        index : Int,
         opacity : Float,
         translateY : Float,
-        index : Int
+        twitchIcon : Painter,
+        naverCafeIcon : Painter,
+        modifier: Modifier = Modifier
     ) {
 
         val type = it.type
@@ -408,18 +420,21 @@ class HomeVer2Fragment : BaseFragment() {
                     .padding(15.dp)
                     .clickable {
                         if (it.type == "twitchChat") {
-                            IntentHelper.intentDetail(requireActivity(), WakitchActivity::class.java)
+                            IntentHelper.intentDetail(
+                                requireActivity(),
+                                WakitchActivity::class.java
+                            )
                         }
                     }
             ) {
-                GlideImage(
-                    model = if (it.type == "twitchChat") R.drawable.icon_twitch_192
-                    else R.drawable.icon_cafe,
-                    contentDescription = "asdf",
+                Image(
+                    painter =
+                    if (it.type == "twitchChat") twitchIcon
+                    else naverCafeIcon,
+                    contentDescription = "type icon",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .width(40.dp)
-                        .height(40.dp)
+                        .size(40.dp)
                         .background(
                             color = colorResource(id = R.color.stackBackground),
                             shape = RoundedCornerShape(10.dp)

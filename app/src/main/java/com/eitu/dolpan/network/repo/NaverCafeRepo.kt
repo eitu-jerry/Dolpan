@@ -8,7 +8,6 @@ import com.eitu.dolpan.network.DolpanResult
 import com.eitu.dolpan.network.api.*
 import com.eitu.dolpan.network.returnResult
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class NaverCafeRepo @Inject constructor(
